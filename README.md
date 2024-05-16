@@ -23,15 +23,15 @@ The programming language used in the development of this application is C. Below
 
 ```c
 typedef struct Node {
-	char data;
+    char data;
     Node* right;
     Node* bottom;
     Node* cross;
 } Node;
 
 typedef struct puzzle {
-	Node* head;
-	int size;
+    Node* head;
+    int size;
 } puzzle;
 
 ```
