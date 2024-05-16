@@ -1,5 +1,3 @@
-# Struktur-Data
-
 # Word Search Puzzle Implementation using Multi-Linked Lists
 
 This project is a part of the assignment for the Data Structures and Algorithms course in the Diploma IV Program of Informatics Engineering, Department of Computer Engineering and Informatics, at Bandung State Polytechnic. 
@@ -20,7 +18,6 @@ Word Search Puzzle, or word search, is a game where words are hidden within a gr
 #### 1.2 Data Structure
 The data structure used in this implementation is the multi-linked list. A multi-linked list is a variation of a linked list where each node has more than one pointer pointing to other nodes. In the Word Search Puzzle application, each node in the multi-linked list represents a letter in the grid, while the pointers on the node point to neighboring nodes in the grid (horizontal, vertical, and diagonal). Below is an illustration of the multi-linked list structure used in the Word Search Puzzle application.
 
-![Multi-Linked List Structure](multi_linked_list_structure.png)
 
 The programming language used in the development of this application is C. Below is an example implementation of the data structure in C that we will use.
 
