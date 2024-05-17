@@ -4,16 +4,9 @@
 #include <time.h>
 #include <windows.h>
 
-#define MAX_WORDS 100 // Jumlah maksimal kata
-#define MAX_FILENAME_LENGTH 50 // Panjang maksimal nama file
+#define MAX_WORDS 15 // Jumlah maksimal kata
+#define MAX_FILENAME_LENGTH 25 // Panjang maksimal nama file
 #define MAX_LEADERBOARD_SIZE 10 // Jumlah maksimal pemain dalam leaderboard
-
-// Struktur untuk simpul linked list kata
-typedef struct WordNode {
-    char word[50];
-    int score; // Skor kata
-    struct WordNode* next; // linked list ke kanan
-} WordNode;
 
 // Struktur untuk pemain
 typedef struct Player {
@@ -21,66 +14,33 @@ typedef struct Player {
     int score;
 } Player;
 
-// Fungsi untuk membuat simpul baru untuk kata
-WordNode* createWordNode(char* word) {
-    WordNode* newWordNode = (WordNode*)malloc(sizeof(WordNode));
-    if (newWordNode == NULL) {
-        printf("Pengalokasian memori gagal.\n");
-        exit(1);
-    }
-    strcpy(newWordNode->word, word);
-    newWordNode->score = 0; // Inisialisasi skor kata
-    newWordNode->next = NULL;
-    return newWordNode;
-}
+// Kamus kata untuk level Easy
+char easyKamus[][MAX_FILENAME_LENGTH] = {"buah", "hewan", "negara"};
+// Kamus kata untuk level Medium
+char mediumKamus[][MAX_FILENAME_LENGTH] = {"hukum", "pendidikan", "benda"};
+// Kamus kata untuk level Hard
+char hardKamus[][MAX_FILENAME_LENGTH] = {"hard_kamus"};
 
-// Fungsi untuk menyisipkan simpul baru ke dalam linked list kata
-void insertWordNode(WordNode** head, char* word) {
-    WordNode* current = *head;
-    // Jika linked list kosong
-    if (current == NULL) {
-        *head = createWordNode(word);
-        return;
-    }
-    // Sisipkan kata di akhir linked list
-    while (current->next != NULL) {
-        current = current->next;
-    }
-    WordNode* newNode = createWordNode(word);
-    current->next = newNode;
-}
 
-// Fungsi untuk mencari kata dalam linked list kata dan memperbarui skornya
-void searchAndUpdateScore(WordNode* head, char* target) {
-    WordNode* current = head;
-    while (current != NULL) {
-        if (strcmp(current->word, target) == 0) {
+// Fungsi untuk mencari kata dalam array kata dan memperbarui skornya
+int searchAndUpdateScore(char words[][50], int scores[], int wordCount, char* target) {
+    for (int i = 0; i < wordCount; ++i) {
+        if (strcmp(words[i], target) == 0) {
             // Kata ditemukan, tambahkan skor
-            current->score++;
+            scores[i]++;
+            return 1; // Mengembalikan 1 jika kata ditemukan
         }
-        current = current->next;
     }
+    return 0; // Mengembalikan 0 jika kata tidak ditemukan
 }
 
 // Fungsi untuk menghitung total skor dari semua kata
-int calculateTotalScore(WordNode* head) {
+int calculateTotalScore(int scores[], int wordCount) {
     int totalScore = 0;
-    WordNode* current = head;
-    while (current != NULL) {
-        totalScore += current->score;
-        current = current->next;
+    for (int i = 0; i < wordCount; ++i) {
+        totalScore += scores[i];
     }
     return totalScore;
-}
-
-// Fungsi untuk membebaskan memori dari linked list kata
-void freeWordList(WordNode* head) {
-    WordNode* current = head;
-    while (current != NULL) {
-        WordNode* temp = current;
-        current = current->next;
-        free(temp);
-    }
 }
 
 // Fungsi untuk menambahkan pemain ke leaderboard
@@ -142,7 +102,7 @@ void displayLeaderboard(Player leaderboard[], int leaderboardSize) {
 
 // Fungsi untuk menyimpan leaderboard ke file teks
 void saveLeaderboard(Player leaderboard[], int leaderboardSize) {
-    FILE *file = fopen("leaderboard.txt", "w");
+    FILE *file = fopen("Kamus/leaderboard.txt", "w");
     if (file == NULL) {
         printf("Gagal membuka file leaderboard.\n");
         return;
@@ -155,7 +115,7 @@ void saveLeaderboard(Player leaderboard[], int leaderboardSize) {
 
 // Fungsi untuk memuat leaderboard dari file teks
 void loadLeaderboard(Player leaderboard[], int* leaderboardSize) {
-    FILE *file = fopen("leaderboard.txt", "r");
+    FILE *file = fopen("Kamus/leaderboard.txt", "r");
     if (file == NULL) {
         printf("File leaderboard tidak ditemukan, leaderboard kosong.\n");
         return;
@@ -174,6 +134,7 @@ void inputPlayerName(char* playerName) {
 
 // Fungsi untuk menampilkan main menu
 int displayMainMenu() {
+	system("cls");
     int choice;
     printf("  __  __       _         __  __                  \n");
     printf(" |  \\/  |     (_)       |  \\/  |                 \n");
@@ -192,8 +153,6 @@ int displayMainMenu() {
 }
 
 void printBanner() {
-	
-
     printf(" __          __           _         \n");
     printf(" \\ \\        / /          | |        \n");
     printf("  \\ \\  /\\  / /__  _ __ __| |        \n");
@@ -204,19 +163,13 @@ void printBanner() {
     printf("  | (___   ___  __ _ _ __ ___| |__  \n");
     printf("   \\___ \\ / _ \\/ _` | '__/ __| '_ \\ \n");
     printf("   ____) |  __/ (_| | | | (__| | | |\n");
-    printf("  |_____/ \\___|\\__,_|_|  \\___|_| |_|   \n");
-    printf("   |  __ \\             | |          \n");
-    printf("   | |__) |   _ _______| | ___      \n");
-    printf("   |  ___/ | | |_  /_  / |/ _ \\     \n");
-    printf("   | |   | |_| |/ / / /| |  __/     \n");
-    printf("   |_|    \\__,_/___/___|_|\\___|     \n\n\n");
+    printf("  |_____/ \\___|\\__,_|_|  \\___|_| |_|   \n\n\n");
     printf(" _    _      _                            _____       _   _            _____  ___ ___  ________ _ \n");
     printf("| |  | |    | |                          |_   _|     | | | |          |  __ \\/ _ \\|  \\/  |  ___| |\n");
     printf("| |  | | ___| | ___ ___  _ __ ___   ___    | | ___   | |_| |__   ___  | |  \\/ /_\\ \\ .  . | |__ | |\n");
     printf("| |\\/| |/ _ \\ |/ __/ _ \\| '_ ` _ \\ / _ \\   | |/ _ \\  | __| '_ \\ / _ \\ | | __|  _  | |\\/| |  __|| |\n");
     printf("| |  | |  __/ | (_| (_) | | | | | |  __/   | | (_) | | |_| | | |  __/ | |_\\ \\ | | | |  | | |___|_|\n");
-    printf("\\_/  |_/\\___|_|\\___\\___/|_| |_| |_|\\___|   \\_/\\___/   \\__|_| |_|\\___|  \\____|_| |_|_|  |_|____/(_)\n\n\n");
-
+    printf("\\_/  |_/\\___|_|\\___\\___/|_| |_| |_|\\___|   \\_/\\___/   \\__|_| |_|\\___|  \\____|_| \\_\\_|  |_|____/(_)\n");
 }
 
 int main() {
@@ -231,7 +184,7 @@ int main() {
     // Meminta nama pemain
     char playerName[50];
     inputPlayerName(playerName);
-	system("cls");
+    system("cls");
     // Main loop
     int choice;
     do {
@@ -242,33 +195,63 @@ int main() {
 
                 // Meminta pengguna untuk memilih tema
                 printf(" _____ ________  ___ ___  \n");
-			    printf("|_   _|  ___|  \\/  |/ _ \\ \n");
-			    printf("  | | | |__ | .  . / /_\\ \\\n");
-			    printf("  | | |  __|| |\\/| |  _  |\n");
-			    printf("  | | | |___| |  | | | | |\n");
-			    printf("  \\_/ \\____/\\_|  |_|_| |_/\n");
-			    printf("                          \n");
-			    printf(" =========================\n");
-                printf("1. Buah\n");
-                printf("2. Hewan\n");
-                printf("3. Pendidikan\n");
-                printf("4. Negara\n");
-                printf("5. Hukum\n");
-                printf("6. Benda\n");
-                printf("Pilihan Anda: ");
-                int themeChoice;
-                scanf("%d", &themeChoice);
+                printf("|_   _|  ___|  \\/  |/ _ \\ \n");
+                printf("  | | | |__ | .  . / /_\\ \\\n");
+                printf("  | | |  __|| |\\/| |  _  |\n");
+                printf("  | | | |___| |  | | | | |\n");
+                printf("  \\_/ \\____/\\_|  |_|_| |_/\n");
+                printf("                          \n");
+                printf(" =========================\n");
+                printf("=========================\n");
+			    printf("1. Easy\n");
+			    printf("2. Medium\n");
+			    printf("3. Hard\n");
+			    printf("Pilihan Anda: ");
+			    int levelChoice;
+			    scanf("%d", &levelChoice);
+ 
 
-                // Validasi pilihan tema
-                if (themeChoice < 1 || themeChoice > 6) {
-                    printf("Pilihan tidak valid.\n");
-                    break;
-                }
+    char (*selectedKamus)[MAX_FILENAME_LENGTH]; // Pointer untuk memilih kamus kata berdasarkan tingkat kesulitan
+    int kamusSize; // Ukuran kamus kata yang dipilih
 
-                // Memuat tema dari file
-                char themes[][MAX_FILENAME_LENGTH] = {"buah", "hewan", "pendidikan","negara","hukum","Barang"}; // Nama file untuk setiap tema
-                char filename[MAX_FILENAME_LENGTH]; // Nama file tema yang dipilih
-                sprintf(filename, "Kamus/%s.txt", themes[themeChoice - 1]);
+    // Memilih kamus kata berdasarkan tingkat kesulitan yang dipilih
+    switch (levelChoice) {
+        case 1:
+            selectedKamus = easyKamus;
+            kamusSize = sizeof(easyKamus) / sizeof(easyKamus[0]);
+            break;
+        case 2:
+            selectedKamus = mediumKamus;
+            kamusSize = sizeof(mediumKamus) / sizeof(mediumKamus[0]);
+            break;
+        case 3:
+            selectedKamus = hardKamus;
+            kamusSize = sizeof(hardKamus) / sizeof(hardKamus[0]);
+            break;
+        default:
+            printf("Pilihan tidak valid.\n");
+            return 1; // Keluar dari program dengan kode kesalahan
+    }
+
+    // Pilih tema
+    printf("=========================\n");
+    printf("Pilih tema:\n");
+    for (int i = 0; i < kamusSize; ++i) {
+        printf("%d. %s\n", i + 1, selectedKamus[i]);
+    }
+    printf("Pilihan Anda: ");
+    int themeChoice;
+    scanf("%d", &themeChoice);
+
+    // Validasi pilihan tema
+    if (themeChoice < 1 || themeChoice > kamusSize) {
+        printf("Pilihan tema tidak valid.\n");
+        return 1; // Keluar dari program dengan kode kesalahan
+    }
+
+    // Memuat tema dari file
+    char filename[MAX_FILENAME_LENGTH]; // Nama file tema yang dipilih
+    sprintf(filename, "Kamus/%s.txt", selectedKamus[themeChoice - 1]);
 
                 FILE *file;
                 // Membuka file
@@ -280,6 +263,7 @@ int main() {
 
                 // Membaca kata-kata dari file dan menyimpannya dalam array
                 char words[MAX_WORDS][50];
+                int scores[MAX_WORDS] = {0}; // Array untuk menyimpan skor setiap kata
                 int wordCount = 0;
                 while (wordCount < MAX_WORDS && fscanf(file, "%49s", words[wordCount]) == 1) {
                     wordCount++;
@@ -308,15 +292,11 @@ int main() {
                 }
                 printf("\n");
 
-                // Membuat linked list untuk kata-kata dan menambahkan kata-kata yang telah diacak
-                WordNode* head = NULL;
-                for (int i = 0; i < wordCount; i++) {
-                    insertWordNode(&head, words[i]);
-                }
-
                 // Loop untuk mencari kata-kata
-                while (1) {
-                    // Mencari kata yang dimasukkan oleh pengguna dalam linked list
+                int totalScore = 0; // Inisialisasi total skor
+                int correctWords = 0; // Inisialisasi jumlah kata yang benar
+                while (correctWords < 5) { // Loop berakhir setelah lima kata yang benar dimasukkan
+                    // Mencari kata yang dimasukkan oleh pengguna dalam array kata
                     char input_word[50];
                     printf("Masukkan kata (tekan 'q' untuk keluar): ");
                     scanf("%s", input_word);
@@ -325,26 +305,26 @@ int main() {
                     if (strcmp(input_word, "q") == 0)
                         break;
 
-                    // Mencari kata dalam linked list kata dan memperbarui skor
-                    searchAndUpdateScore(head, input_word);
+                    // Mencari kata dalam array kata dan memperbarui skor
+                    if (searchAndUpdateScore(words, scores, wordCount, input_word)) {
+                        totalScore++; // Menambahkan skor jika kata ditemukan
+                        correctWords++; // Menambahkan jumlah kata yang benar
+                    }
                 }
 
-                // Menghitung total skor dari semua kata
-                int totalScore = calculateTotalScore(head);
                 printf("Total skor: %d\n", totalScore);
 
                 // Menambahkan pemain ke leaderboard
                 addToLeaderboard(leaderboard, &leaderboardSize, playerName, totalScore);
-
-                // Membebaskan memori dari linked list kata
-                freeWordList(head);
                 break;
             }
             case 2:
                 // Menampilkan leaderboard
-                displayLeaderboard(leaderboard, leaderboardSize);
-                break;
                 
+                displayLeaderboard(leaderboard, leaderboardSize);
+                system("pause");
+                break;
+
             case 3:
                 // Keluar dari program
                 // Menyimpan leaderboard ke file teks
