@@ -34,6 +34,10 @@ typedef struct puzzle {
     int size;
 } puzzle;
 
+typedef struct Player {
+    char name[50];
+    int score;
+} Player;
 ```
 
 By using the multi-linked list data structure, we can efficiently represent a grid of characters and perform word searches within that grid. This allows for the creation of an interactive and enjoyable Word Search Puzzle application for users.
