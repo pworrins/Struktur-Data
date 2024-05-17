@@ -104,7 +104,6 @@ void makePuzzle (puzzle* board) {
 	setBottomLinks(*&board);
 	setDiagonalLinks(*&board);
 	
-	
 }
 
 /* Menampilkan list secara Horizontal menggunakan pointer right */
@@ -181,57 +180,6 @@ void displayListLowerDiagonal(puzzle* board) {
 		printf("\n");
 	}
 	printf("\n\n");
-}
-
-
-int checkHorizontal(Node* node, const char* word) {
-    while (*word && node) {
-        if (node->data != *word) {
-            return 0;
-        }
-        word++;
-        node = node->right;
-    }
-    return *word == '\0';
-}
-
-int checkVertical(Node* node, const char* word) {
-    while (*word && node) {
-        if (node->data != *word) {
-            return 0;
-        }
-        word++;
-        node = node->bottom;
-    }
-    return *word == '\0';
-}
-
-int checkDiagonal(Node* node, const char* word) {
-    while (*word && node) {
-        if (node->data != *word) {
-            return 0;
-        }
-        word++;
-        node = node->cross;
-    }
-    return *word == '\0';
-}
-
-int findWord(puzzle* board, const char* word) {
-    Node* row = board->head;
-    bool find = false;
-    for (int i = 0; i < board->size; i++){
-        Node* current = row;
-        while (current) {
-            if (checkHorizontal(current, word) || checkVertical(current, word) || checkDiagonal(current, word)) {
-            	find = true;
-                return find;
-            }
-            current = current->right;
-        }
-        row = row->bottom;
-    }
-    return find;
 }
 
 int checkSpaceHorizontal(Node* node, const char* word) {
@@ -335,25 +283,71 @@ void fillEmptySpacesWithRandomLetters(puzzle* board) {
     }
 }
 
+
+int checkHorizontal(Node* node, const char* word) {
+    while (*word && node) {
+        if (node->data != *word) {
+            return 0;
+        }
+        word++;
+        node = node->right;
+    }
+    return *word == '\0';
+}
+
+int checkVertical(Node* node, const char* word) {
+    while (*word && node) {
+        if (node->data != *word) {
+            return 0;
+        }
+        word++;
+        node = node->bottom;
+    }
+    return *word == '\0';
+}
+
+int checkDiagonal(Node* node, const char* word) {
+    while (*word && node) {
+        if (node->data != *word) {
+            return 0;
+        }
+        word++;
+        node = node->cross;
+    }
+    return *word == '\0';
+}
+
+int findWord(puzzle* board, const char* word) {
+    Node* row = board->head;
+    bool find = false;
+    for (int i = 0; i < board->size; i++){
+        Node* current = row;
+        while (current) {
+            if (checkHorizontal(current, word) || checkVertical(current, word) || checkDiagonal(current, word)) {
+            	find = true;
+                return find;
+            }
+            current = current->right;
+        }
+        row = row->bottom;
+    }
+    return find;
+}
+
 int main () {
 	puzzle board;
 	board.head = NULL;
 	board.size = 10;
 	
 	makePuzzle(&board);
-	
 	const char* words[5] = {"ZAHRA", "MATEMATIKA", "WORLD", "CROSS", "SALWA"};
     for (int i = 0; i < 5; i++) {
         insertWordRandom(&board, words[i]);
     }
-    
     fillEmptySpacesWithRandomLetters(&board);
 	
 	displayList(&board);
 	
-//	displayListVertikal(&board);
-//	displayListUpperDiagonal(&board);
-//	displayListLowerDiagonal(&board);
 	
 	char word[100]; // Asumsikan panjang maksimum kata adalah 99 + null terminator
     printf("Masukkan kata: ");
