@@ -3,6 +3,7 @@
 #include <conio.h>
 #include <string.h>
 #include <time.h>
+#include <windows.h>
 
 typedef struct Node {
 	char data;
@@ -336,6 +337,7 @@ void fillEmptySpacesWithRandomLetters(puzzle* board) {
 }
 
 int main () {
+	system ("color FD");
 	puzzle board;
 	board.head = NULL;
 	board.size = 10;

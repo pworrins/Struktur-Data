@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <conio.h>
 #include <string.h>
 #include <time.h>
 #include <windows.h>
@@ -14,6 +15,20 @@ typedef struct Player {
     int score;
 } Player;
 
+//Stuktur untuk Node
+typedef struct Node {
+	char data;
+    Node* right;
+    Node* bottom;
+    Node* cross;
+} Node;
+
+//Struktur untuk puzzle
+typedef struct puzzle {
+	Node* head;
+	int size;
+} puzzle;
+
 // Kamus kata untuk level Easy
 char easyKamus[][MAX_FILENAME_LENGTH] = {"buah", "hewan", "negara"};
 // Kamus kata untuk level Medium
@@ -21,6 +36,326 @@ char mediumKamus[][MAX_FILENAME_LENGTH] = {"hukum", "pendidikan", "benda"};
 // Kamus kata untuk level Hard
 char hardKamus[][MAX_FILENAME_LENGTH] = {"hard_kamus"};
 
+
+
+
+Node* allocation (){
+	Node* node = (Node*) malloc(sizeof(Node));
+	
+	if (node == NULL) {
+		printf ("\tMemory Penuh");
+		exit(EXIT_FAILURE);
+	}
+	
+	node->data = NULL;
+	node->right = NULL;
+	node->bottom = NULL;
+	node->cross = NULL;
+	
+	return node;
+}
+
+void addNode(puzzle* board) {
+	Node* node = allocation ();
+	
+	if (board->head == NULL){ //jika tidak ada elemen
+		board->head = node;
+	} else {
+		node->right = board->head;
+		board->head = node;
+	}
+}
+
+void setRightLinks(puzzle* board) {
+	int n = (board->size) * (board->size);
+	for (int i = 1; i <= n; i++){
+		addNode(&*board);
+	}
+}
+
+void setBottomLinks(puzzle* board) {
+	Node* currHead = board->head;
+	Node* curr = currHead;
+
+	int n = (board->size) * (board->size);
+	for (int i = 1; i <= n; i++){
+		curr = currHead;
+		for (int j = 1; j <= board->size; j++){
+			if (curr->right != NULL){
+				curr = curr->right;
+			}
+		}
+		currHead->bottom = curr;
+		currHead = currHead->right;
+	}
+}
+
+void setDiagonalLinks(puzzle* board) {
+	Node* curr = board->head;
+	Node* currHead = board->head;
+	
+	int n = (board->size) * (board->size);
+	for (int i = 1; i <= n; i++){
+		curr = currHead;
+		for (int j = 1; j <= (board->size) + 1; j++){
+			if (curr->right != NULL){
+				curr = curr->right;
+			}
+		}
+		currHead->cross = curr;
+		currHead = currHead->right;
+	}	
+	
+	currHead = board->head;
+	curr = currHead;
+
+	for (int i = 1; i <= board->size; i++){
+		curr = currHead;
+		for (int j = 1; j < board->size; j++){
+			if (curr != NULL){
+				curr = curr->right;
+			}
+		}
+		curr->cross = NULL;
+		curr->right = NULL;
+		currHead = currHead->bottom;
+	}
+}
+
+void makePuzzle (puzzle* board) {
+	setRightLinks(*&board);
+	setBottomLinks(*&board);
+	setDiagonalLinks(*&board);
+	
+	
+}
+
+/* Menampilkan list secara Horizontal menggunakan pointer right */
+void displayList(puzzle* board) {
+	Node* currHead = board->head;
+	Node* curr = currHead;
+	
+	printf("\n = = = = = = = = B O A R D  = = = = = = = =\n ");
+	printf("\n");
+	for (int i = 1; i <= board->size; i++){
+		curr = currHead;
+		for (int j = 1; j <= board->size; j++){
+			printf("%c ", curr->data);
+			curr = curr->right;
+		}
+		currHead = currHead->bottom;
+		printf("\n");
+	}
+	printf("\n\n");
+}
+
+/* Menampilkan list secara diagonaL menggunakan pointer bottom */
+void displayListVertikal(puzzle* board) {
+	Node* currHead = board->head;
+	Node* curr = currHead;
+	
+	printf("\n = = = = = = = =  L I S T  V E R T I K A L  = = = = = = = =\n ");
+	printf("\n");
+	for (int i = 1; i <= board->size; i++){
+		curr = currHead;
+		for (int j = 1; j <= board->size; j++){
+			printf("%c ", curr->data);
+			curr = curr->bottom;
+		}
+		currHead = currHead->right;
+		printf("\n");
+	}
+	printf("\n\n");
+}
+
+/* Menampilkan list secara diagonaL menggunakan pointer cross */
+void displayListUpperDiagonal(puzzle* board) {
+	Node* currHead = board->head;
+	Node* curr = currHead;
+	
+	printf("\n = = = = = = = =  L I S T  D I A G O N A L  U P P E R  = = = = = = = =\n\n");
+
+	for (int i = 1; i <= board->size; i++){
+		curr = currHead;
+		while (curr != NULL) {
+			printf("%c ", curr->data);
+			curr = curr->cross;
+		}
+		currHead = currHead->right;
+		printf("\n");
+	}
+	printf("\n\n");
+}
+
+/* Menampilkan list secara diagonaL menggunakan pointer cross */
+void displayListLowerDiagonal(puzzle* board) {
+	Node* currHead = board->head->bottom;
+	Node* curr = currHead;
+	
+	printf("\n = = = = = = = =  L I S T  D I A G O N A L  L O W E R  = = = = = = = =\n\n");
+
+	for (int i = 1; i <= board->size; i++){
+		curr = currHead;
+		while (curr->right != NULL) {
+			printf("%c ", curr->data);
+			curr = curr->cross;
+		}
+		currHead = currHead->bottom;
+		printf("\n");
+	}
+	printf("\n\n");
+}
+
+
+int checkHorizontal(Node* node, const char* word) {
+    while (*word && node) {
+        if (node->data != *word) {
+            return 0;
+        }
+        word++;
+        node = node->right;
+    }
+    return *word == '\0';
+}
+
+int checkVertical(Node* node, const char* word) {
+    while (*word && node) {
+        if (node->data != *word) {
+            return 0;
+        }
+        word++;
+        node = node->bottom;
+    }
+    return *word == '\0';
+}
+
+int checkDiagonal(Node* node, const char* word) {
+    while (*word && node) {
+        if (node->data != *word) {
+            return 0;
+        }
+        word++;
+        node = node->cross;
+    }
+    return *word == '\0';
+}
+
+int findWord(puzzle* board, const char* word) {
+    Node* row = board->head;
+    bool find = false;
+    for (int i = 0; i < board->size; i++){
+        Node* current = row;
+        while (current) {
+            if (checkHorizontal(current, word) || checkVertical(current, word) || checkDiagonal(current, word)) {
+            	find = true;
+                return find;
+            }
+            current = current->right;
+        }
+        row = row->bottom;
+    }
+    return find;
+}
+
+int checkSpaceHorizontal(Node* node, const char* word) {
+    while (*word && node) {
+        if (node->data != '\0') {
+            return 0;
+        }
+        word++;
+        node = node->right;
+    }
+    return *word == '\0';
+}
+
+int checkSpaceVertical(Node* node, const char* word) {
+    while (*word && node) {
+        if (node->data != '\0') {
+            return 0;
+        }
+        word++;
+        node = node->bottom;
+    }
+    return *word == '\0';
+}
+
+int checkSpaceDiagonal(Node* node, const char* word) {
+    while (*word && node) {
+        if (node->data != '\0') {
+            return 0;
+        }
+        word++;
+        node = node->cross;
+    }
+    return *word == '\0';
+}
+
+void insertWordHorizontal(Node* node, const char* word) {
+    while (*word && node) {
+        node->data = *word;
+        word++;
+        node = node->right;
+    }
+}
+
+void insertWordVertical(Node* node, const char* word) {
+    while (*word && node) {
+        node->data = *word;
+        word++;
+        node = node->bottom;
+    }
+}
+
+void insertWordDiagonal(Node* node, const char* word) {
+    while (*word && node) {
+        node->data = *word;
+        word++;
+        node = node->cross;
+    }
+}
+
+void insertWordRandom(puzzle* board, const char* word) {
+    int row, col;
+    Node* node;
+	int direction;
+    do {
+        row = rand() % (board->size - strlen(word) + 1);
+        col = rand() % (board->size - strlen(word) + 1);
+        direction = ((rand() * rand()) * row) % 3;
+        node = board->head;
+        for (int i = 0; i < row; i++) {
+            node = node->bottom;
+        }
+        for (int j = 0; j < col; j++) {
+            node = node->right;
+        }
+    } while ((direction == 0 && !checkSpaceHorizontal(node, word)) ||
+             (direction == 1 && !checkSpaceVertical(node, word)) ||
+             (direction == 2 && !checkSpaceDiagonal(node, word)));
+
+    if (direction == 0) {
+        insertWordHorizontal(node, word);
+    } else if (direction == 1) {
+        insertWordVertical(node, word);
+    } else {
+        insertWordDiagonal(node, word);
+    }
+}
+
+void fillEmptySpacesWithRandomLetters(puzzle* board) {
+    Node* currHead = board->head;
+    Node* curr = currHead;
+    for (int i = 0; i < board->size; i++) {
+        curr = currHead;
+        for (int j = 0; j < board->size; j++) {
+            if (curr->data == '\0') {
+                curr->data = 'A' + rand() % 26; // Mengisi dengan huruf acak dari 'A' hingga 'Z'
+            }
+            curr = curr->right;
+        }
+        currHead = currHead->bottom;
+    }
+}
 
 // Fungsi untuk mencari kata dalam array kata dan memperbarui skornya
 int searchAndUpdateScore(char words[][50], int scores[], int wordCount, char* target) {
@@ -164,14 +499,29 @@ void printBanner() {
     printf("   \\___ \\ / _ \\/ _` | '__/ __| '_ \\ \n");
     printf("   ____) |  __/ (_| | | | (__| | | |\n");
     printf("  |_____/ \\___|\\__,_|_|  \\___|_| |_|   \n\n\n");
-    printf(" _    _      _                            _____       _   _            _____  ___ ___  ________ _ \n");
-    printf("| |  | |    | |                          |_   _|     | | | |          |  __ \\/ _ \\|  \\/  |  ___| |\n");
-    printf("| |  | | ___| | ___ ___  _ __ ___   ___    | | ___   | |_| |__   ___  | |  \\/ /_\\ \\ .  . | |__ | |\n");
-    printf("| |\\/| |/ _ \\ |/ __/ _ \\| '_ ` _ \\ / _ \\   | |/ _ \\  | __| '_ \\ / _ \\ | | __|  _  | |\\/| |  __|| |\n");
-    printf("| |  | |  __/ | (_| (_) | | | | | |  __/   | | (_) | | |_| | | |  __/ | |_\\ \\ | | | |  | | |___|_|\n");
-    printf("\\_/  |_/\\___|_|\\___\\___/|_| |_| |_|\\___|   \\_/\\___/   \\__|_| |_|\\___|  \\____|_| \\_\\_|  |_|____/(_)\n");
+    printf("Welcome to Word Search Puzzle \n\n\n");
+    
 }
 
+int displayTheme(){
+	// Meminta pengguna untuk memilih tema
+                printf(" _____ ________  ___ ___  \n");
+                printf("|_   _|  ___|  \\/  |/ _ \\ \n");
+                printf("  | | | |__ | .  . / /_\\ \\\n");
+                printf("  | | |  __|| |\\/| |  _  |\n");
+                printf("  | | | |___| |  | | | | |\n");
+                printf("  \\_/ \\____/\\_|  |_|_| |_/\n");
+                printf("                          \n");
+                printf("=========================\n");
+                printf("=========================\n");
+                printf("1. Easy\n");
+                printf("2. Medium\n");
+                printf("3. Hard\n");
+                printf("Pilihan Anda: ");
+                int levelChoice;
+                scanf("%d", &levelChoice);
+            	return levelChoice;
+}
 int main() {
     Player leaderboard[MAX_LEADERBOARD_SIZE]; // Leaderboard
     int leaderboardSize = 0; // Ukuran leaderboard
@@ -193,30 +543,13 @@ int main() {
         switch (choice) {
             case 1: {
                 system("cls"); // Membersihkan layar sebelum memulai permainan
-
-                // Meminta pengguna untuk memilih tema
-                printf(" _____ ________  ___ ___  \n");
-                printf("|_   _|  ___|  \\/  |/ _ \\ \n");
-                printf("  | | | |__ | .  . / /_\\ \\\n");
-                printf("  | | |  __|| |\\/| |  _  |\n");
-                printf("  | | | |___| |  | | | | |\n");
-                printf("  \\_/ \\____/\\_|  |_|_| |_/\n");
-                printf("                          \n");
-                printf(" =========================\n");
-                printf("=========================\n");
-                printf("1. Easy\n");
-                printf("2. Medium\n");
-                printf("3. Hard\n");
-                printf("Pilihan Anda: ");
-                int levelChoice;
-                scanf("%d", &levelChoice);
- 
+                int themechoice;
+ 				themechoice = displayTheme();
 
                 char (*selectedKamus)[MAX_FILENAME_LENGTH]; // Pointer untuk memilih kamus kata berdasarkan tingkat kesulitan
                 int kamusSize; // Ukuran kamus kata yang dipilih
-
                 // Memilih kamus kata berdasarkan tingkat kesulitan yang dipilih
-                switch (levelChoice) {
+                switch (themechoice) {
                     case 1:
                         selectedKamus = easyKamus;
                         kamusSize = sizeof(easyKamus) / sizeof(easyKamus[0]);
@@ -283,15 +616,32 @@ int main() {
                         strcpy(words[i], words[j]);
                         strcpy(words[j], temp);
                     }
-                }
-
-                // Menampilkan lima kata yang telah diacak
+                }	
+                
+                // Menampilkan lima kata yang telah diacak ke dalam array baru
                 printf("Kata-kata yang telah diacak:\n");
-                int numWordsToDisplay = 10; // Jumlah kata yang akan ditampilkan
+                int numWordsToDisplay = 5; // Jumlah kata yang akan ditampilkan
+                char *searchWord[5];
                 for (int i = 0; i < numWordsToDisplay && i < wordCount; i++) {
-                    printf("%s\n", words[i]);
+                	searchWord[i] = words[i];
+                	printf("%s\n", words[i]);
+                    printf("%s\n", searchWord[i]);
                 }
                 printf("\n");
+			                
+			    puzzle board;
+				board.head = NULL;
+				board.size = 10;
+				
+				makePuzzle(&board);
+				
+			    for (int i = 0; i < 5; i++) {
+			        insertWordRandom(&board, searchWord[i]);
+			    }
+			    
+			    fillEmptySpacesWithRandomLetters(&board);
+				
+				displayList(&board);
 
                 // Loop untuk mencari kata-kata
                 int totalScore = 0; // Inisialisasi total skor
@@ -307,7 +657,7 @@ int main() {
                         break;
 
                     // Mencari kata dalam array kata dan memperbarui skor
-                    if (searchAndUpdateScore(words, scores, wordCount, input_word)) {
+                    if ((searchAndUpdateScore(words, scores, wordCount, input_word)) && (findWord(&board, input_word))) {
                         totalScore++; // Menambahkan skor jika kata ditemukan
                         correctWords++; // Menambahkan jumlah kata yang benar
                     }
