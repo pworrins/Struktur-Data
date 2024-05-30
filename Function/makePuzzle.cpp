@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <conio.h>
+#include <windows.h>
 #include <string.h>
 #include <time.h>
 
@@ -54,7 +55,7 @@ void setBottomLinks(puzzle* board) {
 	Node* currHead = board->head;
 	Node* curr = currHead;
 
-	int n = (board->size) * (board->size);
+	int n = (board->size) * ((board->size) - 1);
 	for (int i = 1; i <= n; i++){
 		curr = currHead;
 		for (int j = 1; j <= board->size; j++){
@@ -71,7 +72,7 @@ void setDiagonalLinks(puzzle* board) {
 	Node* curr = board->head;
 	Node* currHead = board->head;
 	
-	int n = (board->size) * (board->size);
+	int n = (board->size) * ((board->size) - 1);;
 	for (int i = 1; i <= n; i++){
 		curr = currHead;
 		for (int j = 1; j <= (board->size) + 1; j++){
@@ -86,7 +87,7 @@ void setDiagonalLinks(puzzle* board) {
 	currHead = board->head;
 	curr = currHead;
 
-	for (int i = 1; i <= board->size; i++){
+	for (int i = 1; i < board->size; i++){
 		curr = currHead;
 		for (int j = 1; j < board->size; j++){
 			if (curr != NULL){
@@ -103,10 +104,10 @@ void makePuzzle (puzzle* board) {
 	setRightLinks(*&board);
 	setBottomLinks(*&board);
 	setDiagonalLinks(*&board);
-	
 }
 
 /* Menampilkan list secara Horizontal menggunakan pointer right */
+
 void displayList(puzzle* board) {
 	Node* currHead = board->head;
 	Node* curr = currHead;
@@ -123,6 +124,119 @@ void displayList(puzzle* board) {
 		printf("\n");
 	}
 	printf("\n\n");
+}
+
+// Fungsi untuk menggerakkan cursor ke posisi tertentu di konsol
+void gotoxy(int x, int y) {
+    COORD coord;
+    coord.X = x;
+    coord.Y = y;
+    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
+}
+
+// Fungsi untuk mendapatkan ukuran konsol
+void getConsoleSize(int *width, int *height) {
+    CONSOLE_SCREEN_BUFFER_INFO csbi;
+    int columns, rows;
+
+    GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
+    columns = csbi.srWindow.Right - csbi.srWindow.Left + 1;
+    rows = csbi.srWindow.Bottom - csbi.srWindow.Top + 1;
+
+    *width = columns;
+    *height = rows;
+}
+
+void displayPuzzle(puzzle* board){
+	Node* currHead = board->head;
+	Node* curr = currHead;
+	
+	gotoxy(27, 1); 
+	for (int i = 0; i < 8; i++){	
+		printf("%c ", 175);
+	}
+	printf(" W O R D   S E A R C H   P U Z Z L E ");
+	for (int i = 0; i < 8; i++){	
+		printf("%c ", 174);
+	}
+	
+    int consoleWidth, consoleHeight;
+    getConsoleSize(&consoleWidth, &consoleHeight);
+
+    int boxWidth = 4; // Lebar setiap kotak (termasuk garis vertikal)
+    int boxHeight = 2; // Tinggi setiap kotak (termasuk garis horizontal)
+    int size = board->size; // Ukuran papan 10x10
+
+    // Hitung offset untuk menempatkan papan di tengah konsol
+    int offsetX = (consoleWidth - (size * boxWidth)) / 2;
+    int offsetY = (consoleHeight - (size * boxHeight)) / 2;
+
+    int i, j, k;
+
+    // Membuat papan dengan kotak 10x10
+    for (i = 0; i < size; i++) {
+        for (j = 0; j < size; j++) {
+            gotoxy(offsetX + boxWidth * j, offsetY + boxHeight * i);
+            if (i < size) {
+                // Garis horizontal
+                printf("%c", 197); // Titik persilangan
+                for (k = 1; k < boxWidth; k++) {
+                    gotoxy(offsetX + boxWidth * j + k, offsetY + boxHeight * i);
+                    printf("%c", 196); // Garis horizontal
+                }
+            }
+
+            if (j < size) {
+                // Garis vertikal
+                for (k = 1; k < boxHeight; k++) {
+                    gotoxy(offsetX + boxWidth * j, offsetY + boxHeight * i + k);
+                    printf("%c", 179); // Garis vertikal
+                }
+            }
+
+            if (i < size && j < size) {
+                // Huruf di dalam kotak
+                gotoxy(offsetX + boxWidth * j + 1, offsetY + boxHeight * i + 1); // Menyesuaikan posisi huruf di dalam kotak
+                printf(" %c", curr->data);
+                if (curr->right != NULL){
+					curr = curr->right;            	
+				} else {
+					curr = currHead->bottom;
+					currHead = currHead->bottom;
+				}
+            }
+        }
+    }
+
+    // Membuat garis tepi kanan dan bawah papan
+    for (i = 0; i <= size * boxHeight; i++) {
+        gotoxy(offsetX + size * boxWidth, offsetY + i);
+        printf("%c", 186); // Garis vertikal tepi kanan
+    }
+    for (i = 0; i <= size * boxWidth; i++) {
+        gotoxy(offsetX + i, offsetY + size * boxHeight);
+        printf("%c", 205); // Garis horizontal tepi bawah
+    }
+
+    // Membuat garis tepi kiri dan atas papan
+    for (i = 0; i <= size * boxHeight; i++) {
+        gotoxy(offsetX, offsetY + i);
+        printf("%c", 186); // Garis vertikal tepi kiri
+    }
+    for (i = 0; i <= size * boxWidth; i++) {
+        gotoxy(offsetX + i, offsetY);
+        printf("%c", 205); // Garis horizontal tepi atas
+    }
+
+    // Membuat sudut-sudut papan
+    gotoxy(offsetX, offsetY);
+    printf("%c", 201); // Sudut kiri atas
+    gotoxy(offsetX + size * boxWidth, offsetY);
+    printf("%c", 187); // Sudut kanan atas
+    gotoxy(offsetX, offsetY + size * boxHeight);
+    printf("%c", 200); // Sudut kiri bawah
+    gotoxy(offsetX + size * boxWidth, offsetY + size * boxHeight);
+    printf("%c", 188); // Sudut kanan bawah
 }
 
 /* Menampilkan list secara diagonaL menggunakan pointer bottom */
@@ -244,10 +358,11 @@ void insertWordRandom(puzzle* board, const char* word) {
     int row, col;
     Node* node;
 	int direction;
-    do {
-        row = rand() % (board->size - strlen(word) + 1);
+    srand((unsigned int)time(NULL));
+	do {
+        row = rand() % (board->size);
         col = rand() % (board->size - strlen(word) + 1);
-        direction = ((rand() * rand()) * row) % 3;
+        direction = ((rand()) * row) % 3;
         node = board->head;
         for (int i = 0; i < row; i++) {
             node = node->bottom;
@@ -255,16 +370,16 @@ void insertWordRandom(puzzle* board, const char* word) {
         for (int j = 0; j < col; j++) {
             node = node->right;
         }
-    } while ((direction == 0 && !checkSpaceHorizontal(node, word)) ||
-             (direction == 1 && !checkSpaceVertical(node, word)) ||
-             (direction == 2 && !checkSpaceDiagonal(node, word)));
+    } while ((direction == 0 && !checkSpaceVertical (node, word)) ||
+             (direction == 1 && !checkSpaceDiagonal (node, word)) ||
+             (direction == 2 && !checkSpaceHorizontal(node, word)));
 
     if (direction == 0) {
-        insertWordHorizontal(node, word);
+        insertWordVertical (node, word);
     } else if (direction == 1) {
-        insertWordVertical(node, word);
+        insertWordDiagonal (node, word);
     } else {
-        insertWordDiagonal(node, word);
+        insertWordHorizontal(node, word);
     }
 }
 
@@ -335,22 +450,22 @@ int findWord(puzzle* board, const char* word) {
 }
 
 int main () {
+	system("color 70");
 	puzzle board;
 	board.head = NULL;
-	board.size = 10;
+	board.size = 13;
 	
 	makePuzzle(&board);
-	const char* words[5] = {"ZAHRA", "MATEMATIKA", "WORLD", "CROSS", "SALWA"};
+	const char* words[5] = {"matematika", "hilyah", "salwa", "fitri", "yaya"};
     for (int i = 0; i < 5; i++) {
         insertWordRandom(&board, words[i]);
     }
     fillEmptySpacesWithRandomLetters(&board);
 	
-	displayList(&board);
-	
+	displayPuzzle(&board);
 	
 	char word[100]; // Asumsikan panjang maksimum kata adalah 99 + null terminator
-    printf("Masukkan kata: ");
+    gotoxy(40, 29); printf("Masukkan kata: ");
     scanf("%99s", word); 
     if (findWord(&board, word)) {
         printf("Kata '%s' ditemukan!\n", word);
