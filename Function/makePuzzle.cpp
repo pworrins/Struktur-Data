@@ -4,6 +4,7 @@
 #include <windows.h>
 #include <string.h>
 #include <time.h>
+#include <windows.h>
 
 typedef struct Node {
 	char data;
@@ -451,6 +452,7 @@ int findWord(puzzle* board, const char* word) {
 
 int main () {
 	system("color 70");
+	system ("color FD");
 	puzzle board;
 	board.head = NULL;
 	board.size = 13;
