@@ -38,6 +38,27 @@ char hardKamus[][MAX_FILENAME_LENGTH] = {"hard_kamus"};
 
 
 
+void gotoxy(int x, int y) {
+    COORD coord;
+    coord.X = x;
+    coord.Y = y;
+    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
+}
+
+
+// Fungsi untuk mendapatkan ukuran konsol
+void getConsoleSize(int *width, int *height) {
+    CONSOLE_SCREEN_BUFFER_INFO csbi;
+    int columns, rows;
+
+    GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
+    columns = csbi.srWindow.Right - csbi.srWindow.Left + 1;
+    rows = csbi.srWindow.Bottom - csbi.srWindow.Top + 1;
+
+    *width = columns;
+    *height = rows;
+}
+
 
 Node* allocation (){
 	Node* node = (Node*) malloc(sizeof(Node));
@@ -434,6 +455,56 @@ void displayLeaderboard(Player leaderboard[], int leaderboardSize) {
     }
     printf("=======================\n\n");
 }
+// Fungsi untuk menggambar tabel di tengah konsol
+void table() {
+    system("cls");
+
+    int tableWidth = 65; // Lebar tabel
+    int tableHeight = 13; // Tinggi tabel pertama
+    int consoleWidth, consoleHeight;
+
+    getConsoleSize(&consoleWidth, &consoleHeight);
+
+    // Hitung offset untuk menempatkan tabel di tengah konsol
+    int offsetX = (consoleWidth - tableWidth) / 2;
+    int offsetY = (consoleHeight - 2 * tableHeight) / 2;
+
+    // Membuat kotak pertama (atas)
+    // Garis atas
+    gotoxy(offsetX, offsetY); printf("%c", 201);
+    for (int i = 1; i < tableWidth - 1; i++) {
+        printf("%c", 205);
+    }
+    printf("%c\n", 187);
+
+    // Garis samping dan isi kotak pertama
+    for (int i = 1; i < tableHeight; i++) {
+        gotoxy(offsetX, offsetY + i); printf("%c", 186);
+        gotoxy(offsetX + tableWidth - 1, offsetY + i); printf("%c", 186);
+    }
+
+    // Garis bawah kotak pertama (bagian atas kotak kedua)
+    gotoxy(offsetX, offsetY + tableHeight); printf("%c", 204);
+    for (int i = 1; i < tableWidth - 1; i++) {
+        printf("%c", 205);
+    }
+    printf("%c\n", 185);
+
+    // Membuat kotak kedua (bawah)
+    // Garis samping kotak kedua
+    tableHeight = 10;
+    for (int i = 1; i < tableHeight; i++) {
+        gotoxy(offsetX, offsetY + tableHeight + i); printf("%c", 186);
+        gotoxy(offsetX + tableWidth - 1, offsetY + tableHeight + i); printf("%c", 186);
+    }
+
+    // Garis bawah kotak kedua
+    gotoxy(offsetX, offsetY + 2 * tableHeight); printf("%c", 200);
+    for (int i = 1; i < tableWidth - 1; i++) {
+        printf("%c", 205);
+    }
+    printf("%c\n", 188);
+}
 
 // Fungsi untuk menyimpan leaderboard ke file teks
 void saveLeaderboard(Player leaderboard[], int leaderboardSize) {
@@ -463,136 +534,140 @@ void loadLeaderboard(Player leaderboard[], int* leaderboardSize) {
 
 // Fungsi untuk meminta nama pemain
 void inputPlayerName(char* playerName) {
-    printf("Masukkan Nama Anda: ");
-    scanf("%s", playerName);
+    int x = 48;
+    gotoxy(x, 17); printf("Welcome To Game !!!\n");
+    gotoxy(x, 18); printf("====================\n");
+    gotoxy(x, 19); printf("Masukkan Nama Anda :\n");
+    gotoxy(x, 20); scanf("%s", playerName);
 }
 
 // Fungsi untuk menampilkan main menu
 int displayMainMenu() {
-	system("cls");
+	table();
+	int x = 35;
+	int y = 48;
     int choice;
-    printf("  __  __       _         __  __                  \n");
-    printf(" |  \\/  |     (_)       |  \\/  |                 \n");
-    printf(" | \\  / | __ _ _ _ __   | \\  / | ___ _ __  _   _ \n");
-    printf(" | |\\/| |/ _` | | '_ \\  | |\\/| |/ _ \\ '_ \\| | | |\n");
-    printf(" | |  | | (_| | | | | | | |  | |  __/ | | | |_| |\n");
-    printf(" |_|  |_|\\__,_|_|_| |_| |_|  |_|\\___|_| |_|\\__,_|\n");
-    printf("                                                 \n");
-    printf("==================================================\n");
-    printf("1. Mulai Permainan\n");
-    printf("2. Tampilkan Leaderboard\n");
-    printf("3. Keluar\n");
-    printf("Pilihan Anda: ");
-    scanf("%d", &choice);
+    gotoxy(x, 6);printf("  __  __       _         __  __                  \n");
+    gotoxy(x, 7);printf(" |  \\/  |     (_)       |  \\/  |                 \n");
+    gotoxy(x, 8);printf(" | \\  / | __ _ _ _ __   | \\  / | ___ _ __  _   _ \n");
+    gotoxy(x, 9);printf(" | |\\/| |/ _` | | '_ \\  | |\\/| |/ _ \\ '_ \\| | | |\n");
+    gotoxy(x,10);printf(" | |  | | (_| | | | | | | |  | |  __/ | | | |_| |\n");
+    gotoxy(x,11);printf(" |_|  |_|\\__,_|_|_| |_| |_|  |_|\\___|_| |_|\\__,_|\n");
+    gotoxy(y,17);printf("1. Mulai Permainan\n");
+    gotoxy(y,18);printf("2. Tampilkan Leaderboard\n");
+    gotoxy(y,19);printf("3. Keluar\n");
+    gotoxy(y,20);printf("Pilihan Anda? Masukan Angka !");
+    gotoxy(y,21);scanf("%d", &choice);
     return choice;
 }
 
-void printBanner() {
-    printf(" __          __           _         \n");
-    printf(" \\ \\        / /          | |        \n");
-    printf("  \\ \\  /\\  / /__  _ __ __| |        \n");
-    printf("   \\ \\/  \\/ / _ \\| '__/ _` |        \n");
-    printf("    \\  /\\  / (_) | | | (_| |        \n");
-    printf("    _\\/__\\/ \\___/|_|  \\__,_|  _     \n");
-    printf("   / ____|                   | |    \n");
-    printf("  | (___   ___  __ _ _ __ ___| |__  \n");
-    printf("   \\___ \\ / _ \\/ _` | '__/ __| '_ \\ \n");
-    printf("   ____) |  __/ (_| | | | (__| | | |\n");
-    printf("  |_____/ \\___|\\__,_|_|  \\___|_| |_|   \n\n\n");
-    printf("Welcome to Word Search Puzzle \n\n\n");
-    
+void BannerTheme(){
+	int x = 48;
+	gotoxy(x, 7);printf(" _____ ________  ___ ___  \n");
+    gotoxy(x, 8);printf("|_   _|  ___|  \\/  |/ _ \\ \n");
+    gotoxy(x, 9);printf("  | | | |__ | .  . / /_\\ \\\n");
+    gotoxy(x,10);printf("  | | |  __|| |\\/| |  _  |\n");
+    gotoxy(x,11);printf("  | | | |___| |  | | | | |\n");
+    gotoxy(x,12);printf("  \\_/ \\____/\\_|  |_|_| |_/\n");
 }
-
 int displayTheme(){
-	// Meminta pengguna untuk memilih tema
-                printf(" _____ ________  ___ ___  \n");
-                printf("|_   _|  ___|  \\/  |/ _ \\ \n");
-                printf("  | | | |__ | .  . / /_\\ \\\n");
-                printf("  | | |  __|| |\\/| |  _  |\n");
-                printf("  | | | |___| |  | | | | |\n");
-                printf("  \\_/ \\____/\\_|  |_|_| |_/\n");
-                printf("                          \n");
-                printf("=========================\n");
-                printf("=========================\n");
-                printf("1. Easy\n");
-                printf("2. Medium\n");
-                printf("3. Hard\n");
-                printf("Pilihan Anda: ");
+	table();
+	int x = 48;
+    BannerTheme();
+    gotoxy(x, 17);printf("1. Easy\n");
+    gotoxy(x, 18);printf("2. Medium\n");
+    gotoxy(x, 19);printf("3. Hard\n");
+    gotoxy(x, 20);printf("Pilihan Anda: ");
                 int levelChoice;
                 scanf("%d", &levelChoice);
             	return levelChoice;
 }
-int main() {
-    Player leaderboard[MAX_LEADERBOARD_SIZE]; // Leaderboard
-    int leaderboardSize = 0; // Ukuran leaderboard
-    time_t lastUpdated; // Waktu terakhir leaderboard diperbarui
 
-    // Memuat leaderboard dari file teks
-    loadLeaderboard(leaderboard, &leaderboardSize);
-    system("color FD");
-    printBanner();
-    // Meminta nama pemain
-    Player player;
-    inputPlayerName(player.name);
-    player.score = 0;
-    system("cls");
-    // Main loop
-    int choice;
-    do {
-        choice = displayMainMenu();
-        switch (choice) {
-            case 1: {
-                system("cls"); // Membersihkan layar sebelum memulai permainan
-                int themechoice;
- 				themechoice = displayTheme();
+void header() {
+	table();
+	int x = 43;
+	   gotoxy(x, 3);printf(" __          __           _         \n");
+       gotoxy(x, 4);printf(" \\ \\        / /          | |        \n");
+       gotoxy(x, 5);printf("  \\ \\  /\\  / /__  _ __ __| |        \n");
+       gotoxy(x, 6);printf("   \\ \\/  \\/ / _ \\| '__/ _` |        \n");
+       gotoxy(x, 7);printf("    \\  /\\  / (_) | | | (_| |        \n");
+       gotoxy(x, 8);printf("    _\\/__\\/ \\___/|_|  \\__,_|  _     \n");
+       gotoxy(x, 9);printf("   / ____|                   | |    \n");
+       gotoxy(x, 10);printf("  | (___   ___  __ _ _ __ ___| |__  \n");
+       gotoxy(x, 11);printf("   \\___ \\ / _ \\/ _` | '__/ __| '_ \\ \n");
+       gotoxy(x, 12);printf("   ____) |  __/ (_| | | | (__| | | |\n");
+       gotoxy(x, 13);printf("  |_____/ \\___|\\__,_|_|  \\___|_| |_|   \n");
+}
 
-                char (*selectedKamus)[MAX_FILENAME_LENGTH]; // Pointer untuk memilih kamus kata berdasarkan tingkat kesulitan
-                int kamusSize; // Ukuran kamus kata yang dipilih
-                // Memilih kamus kata berdasarkan tingkat kesulitan yang dipilih
-                switch (themechoice) {
-                    case 1:
-                        selectedKamus = easyKamus;
-                        kamusSize = sizeof(easyKamus) / sizeof(easyKamus[0]);
-                        break;
-                    case 2:
-                        selectedKamus = mediumKamus;
-                        kamusSize = sizeof(mediumKamus) / sizeof(mediumKamus[0]);
-                        break;
-                    case 3:
-                        selectedKamus = hardKamus;
-                        kamusSize = sizeof(hardKamus) / sizeof(hardKamus[0]);
-                        break;
-                    default:
-                        printf("Pilihan tidak valid.\n");
-                        return 1; // Keluar dari program dengan kode kesalahan
-                }
 
-                // Pilih tema
-                printf("=========================\n");
-                printf("Pilih tema:\n");
+void speed(float seconds) {
+    clock_t endwait;
+    endwait = clock() + seconds * CLOCKS_PER_SEC;
+    while (clock() < endwait);
+}
+
+void loading() {
+	system("cls");
+    int x = 42;
+    // loading 
+    gotoxy(x,14); printf("               Loading");
+    gotoxy(x,15); printf("     ===========================");
+    gotoxy(x,16); printf("    %c                           %c", 186, 186);
+    gotoxy(x,17); printf("     ===========================");
+    for (int i = 47; i <= 73; i++) {
+        gotoxy(i, 16); printf("\xdb");
+        speed(0.07);
+    }
+}
+void playGame(Player *player, Player leaderboard[], int *leaderboardSize) {
+    // Pilih tema
+    int themeChoice = displayTheme();
+    char (*selectedKamus)[MAX_FILENAME_LENGTH]; // Pointer untuk memilih kamus kata berdasarkan tingkat kesulitan
+    int kamusSize; // Ukuran kamus kata yang dipilih
+
+    // Memilih kamus kata berdasarkan tingkat kesulitan yang dipilih
+    switch (themeChoice) {
+        case 1:
+            selectedKamus = easyKamus;
+            kamusSize = sizeof(easyKamus) / sizeof(easyKamus[0]);
+            break;
+        case 2:
+            selectedKamus = mediumKamus;
+            kamusSize = sizeof(mediumKamus) / sizeof(mediumKamus[0]);
+            break;
+        case 3:
+            selectedKamus = hardKamus;
+            kamusSize = sizeof(hardKamus) / sizeof(hardKamus[0]);
+            break;
+        default:
+            printf("Pilihan tidak valid.\n");
+            return; // Keluar dari fungsi playGame
+   			 }
+				system("cls");
+				table();
+  				 // Pilih tema
+  				 int x = 45;
+                BannerTheme();
                 for (int i = 0; i < kamusSize; ++i) {
-                    printf("%d. %s\n", i + 1, selectedKamus[i]);
+                   gotoxy(x,17+i);printf("%d. %s\n", i + 1, selectedKamus[i]);
                 }
-                printf("Pilihan Anda: ");
-                int themeChoice;
-                scanf("%d", &themeChoice);
+                gotoxy(x,16);printf("Pilihan Anda: ");
+                int choice;
+                scanf("%d", &choice);
 
                 // Validasi pilihan tema
                 if (themeChoice < 1 || themeChoice > kamusSize) {
                     printf("Pilihan tema tidak valid.\n");
-                    return 1; // Keluar dari program dengan kode kesalahan
                 }
 
                 // Memuat tema dari file
                 char filename[MAX_FILENAME_LENGTH]; // Nama file tema yang dipilih
                 sprintf(filename, "Kamus/%s.txt", selectedKamus[themeChoice - 1]);
-
-                FILE *file;
+				FILE *file;
                 // Membuka file
                 file = fopen(filename, "r");
                 if (file == NULL) {
                     printf("Gagal membuka file.\n");
-                    break;
                 }
 
                 // Membaca kata-kata dari file dan menyimpannya dalam array
@@ -619,13 +694,10 @@ int main() {
                 }	
                 
                 // Menampilkan lima kata yang telah diacak ke dalam array baru
-                printf("Kata-kata yang telah diacak:\n");
                 int numWordsToDisplay = 5; // Jumlah kata yang akan ditampilkan
                 char *searchWord[5];
                 for (int i = 0; i < numWordsToDisplay && i < wordCount; i++) {
                 	searchWord[i] = words[i];
-                	printf("%s\n", words[i]);
-                    printf("%s\n", searchWord[i]);
                 }
                 printf("\n");
 			                
@@ -666,8 +738,33 @@ int main() {
                 printf("Total skor: %d\n", totalScore);
 
                 // Menambahkan pemain ke leaderboard
-                addToLeaderboard(leaderboard, &leaderboardSize, player.name, totalScore);
-                break;
+                addToLeaderboard(leaderboard, leaderboardSize, player->name, totalScore);
+}
+
+int main() {
+    Player leaderboard[MAX_LEADERBOARD_SIZE]; // Leaderboard
+    int leaderboardSize = 0; // Ukuran leaderboard
+    time_t lastUpdated; // Waktu terakhir leaderboard diperbarui
+
+    // Memuat leaderboard dari file teks
+    loadLeaderboard(leaderboard, &leaderboardSize);
+    system("color F0");
+    header();
+    // Meminta nama pemain
+    Player player;
+    inputPlayerName(player.name);
+    loading();
+    player.score = 0;
+    system("cls");
+    // Main loop
+    int choice;
+    do {
+        choice = displayMainMenu();
+        loading();
+        switch (choice) {
+            case 1: {
+                system("cls"); // Membersihkan layar sebelum memulai permainan
+                playGame(&player, leaderboard, &leaderboardSize); // Memulai permainan
             }
             case 2:
                 // Menampilkan leaderboard
