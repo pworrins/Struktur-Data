@@ -614,6 +614,8 @@ int displayTheme(){
             	return levelChoice;
 }
 
+
+
 void header() {
 	table();
 	int x = 43;
@@ -734,7 +736,7 @@ void playGame(Player *player, Player leaderboard[], int *leaderboardSize) {
 			                
 			    puzzle board;
 				board.head = NULL;
-				board.size = 10;
+				board.size = 15;
 				
 				makePuzzle(&board);
 				
