@@ -10,6 +10,10 @@ char hardKamus[][MAX_FILENAME_LENGTH] = {"hard_kamus"};
 /* = = =  Word Search Functions = = =  */
 
 void playGame(Player *player, Player leaderboard[], int *leaderboardSize) {
+	// Inisialisasi Struct Puzzle
+	puzzle board;
+	board.head = NULL;
+				
     // Pilih tema
     int themeChoice = displayTheme();
     char (*selectedKamus)[MAX_FILENAME_LENGTH]; // Pointer untuk memilih kamus kata berdasarkan tingkat kesulitan
@@ -20,20 +24,24 @@ void playGame(Player *player, Player leaderboard[], int *leaderboardSize) {
         case 1:
             selectedKamus = easyKamus;
             kamusSize = sizeof(easyKamus) / sizeof(easyKamus[0]);
+            board.size = 8;
             break;
         case 2:
             selectedKamus = mediumKamus;
             kamusSize = sizeof(mediumKamus) / sizeof(mediumKamus[0]);
+            board.size = 10;
             break;
         case 3:
             selectedKamus = hardKamus;
             kamusSize = sizeof(hardKamus) / sizeof(hardKamus[0]);
+            board.size = 12;
             break;
         default:
             printf("Pilihan tidak valid.\n");
             return; // Keluar dari fungsi playGame
-   			 }
-				system("cls");
+	}
+	
+	system("cls");
 				table();
   				 // Pilih tema
   				int x = 50;
@@ -46,18 +54,18 @@ void playGame(Player *player, Player leaderboard[], int *leaderboardSize) {
                 scanf("%d", &choice);
 
                 // Validasi pilihan tema
-                if (themeChoice < 1 || themeChoice > kamusSize) {
+                if (choice < 1 || choice > kamusSize) {
                     printf("Pilihan tema tidak valid.\n");
                 }
 
                 // Memuat tema dari file
                 char filename[MAX_FILENAME_LENGTH]; // Nama file tema yang dipilih
-                sprintf(filename, "Kamus/%s.txt", selectedKamus[themeChoice - 1]);
+                sprintf(filename, "Kamus/%s.txt", selectedKamus[choice - 1]);
 				FILE *file;
                 // Membuka file
                 file = fopen(filename, "r");
                 if (file == NULL) {
-                    printf("Gagal membuka file.\n");
+                    printf("\n\n\n			Gagal membuka file.\n");
                 }
 
                 // Membaca kata-kata dari file dan menyimpannya dalam array
@@ -91,9 +99,6 @@ void playGame(Player *player, Player leaderboard[], int *leaderboardSize) {
                 }
                 printf("\n");
 			                
-			    puzzle board;
-				board.head = NULL;
-				board.size = 13;
 				
 				makePuzzle(&board);
 				
@@ -118,11 +123,12 @@ void playGame(Player *player, Player leaderboard[], int *leaderboardSize) {
                     
                     char input_word[50];
                     char findedWord[5][50];
-                    char inputWord[] = "Input Word : ";
 					
 					int consoleWidth, consoleHeight;
     				getConsoleSize(&consoleWidth, &consoleHeight);
+					
 					// Hitung posisi horizontal untuk teks
+                    char inputWord[] = "Input Word : ";
 					int titlePosX = ((consoleWidth - strlen(inputWord)) / 2) - 8;
 					
 					// Menampilkan teks di tengah konsol
@@ -141,14 +147,27 @@ void playGame(Player *player, Player leaderboard[], int *leaderboardSize) {
                     if ((searchAndUpdateScore(words, scores, wordCount, input_word)) && (findWord(&board, input_word))) {
                         for (int i = 0; i < 5; i++) {
 	                		if (strcmp(input_word, findedWord[i]) == 0) {
-		                		printf("\n						You have found it O_O");
-		                		getch();
+	                			// Hitung posisi horizontal untuk teks
+			                    char founded[] = "You have found it O_O";
+								titlePosX = ((consoleWidth - strlen(founded)) / 2) - 8;
+								
+								// Menampilkan teks di tengah konsol
+								gotoxy(titlePosX, consoleHeight - 1);
+								printf("%s", founded);
+								getch();
 		                		found = 1;
 							} 
 						}
 						if (!found) {
-							printf("\n							AWESOME ^^");
+							// Hitung posisi horizontal untuk teks
+		                    char awesome[] = "AWESOME ^^";
+							titlePosX = ((consoleWidth - strlen(awesome)) / 2) - 8;
+							
+							// Menampilkan teks di tengah konsol
+							gotoxy(titlePosX, consoleHeight - 1);
+							printf("%s", awesome);
 							getch();
+							
 							player->correctWord++; // Menambahkan jumlah kata yang benar
 	                        player->score =  player->score + 100; // Menambahkan skor jika kata ditemukan
 					        strcpy(findedWord[k], input_word);
