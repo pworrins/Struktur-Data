@@ -149,8 +149,9 @@ int displayMainMenu() {
     gotoxy(x,10);printf(" | |  | | (_| | | | | | | |  | |  __/ | | | |_| |\n");
     gotoxy(x,11);printf(" |_|  |_|\\__,_|_|_| |_| |_|  |_|\\___|_| |_|\\__,_|\n");
     gotoxy(y,18);printf("1. Start\n");
-    gotoxy(y,19);printf("2. Leaderboard\n");
-    gotoxy(y,20);printf("3. Quit\n");
+    gotoxy(y,19);printf("2. Rules\n");
+    gotoxy(y,20);printf("3. Leaderboard\n");
+    gotoxy(y,21);printf("4. Quit\n");
     gotoxy(y,17);printf("Your Input: ");
     scanf("%d", &choice);
     return choice;

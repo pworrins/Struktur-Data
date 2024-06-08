@@ -30,11 +30,16 @@ int main() {
                 playGame(&player, leaderboard, &leaderboardSize); // Memulai permainan
             }
             case 2:
+                // Menampilkan Rules
+                mainRules();
+                getch();
+                break;
+            case 3:
                 // Menampilkan leaderboard
                 displayLeaderboard(leaderboard, leaderboardSize);
                 getch();
                 break;
-            case 3:
+            case 4:
                 // Keluar dari program
                 // Menyimpan leaderboard ke file teks
                 saveLeaderboard(leaderboard, leaderboardSize);
@@ -44,10 +49,10 @@ int main() {
                 printf("\n\n\n			Leaderboard terakhir diperbarui pada: %s\n", ctime(&lastUpdated));
                 break;
             default:
-                printf("					Invalid Choice\n");
+                printf("Invalid Choice\n");
                 break;
         }
-    } while (choice != 3);
+    } while (choice != 4);
 
     return 0;
 }

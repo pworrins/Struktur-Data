@@ -217,5 +217,7 @@ void loadLeaderboard(Player leaderboard[], int* leaderboardSize);
 playerName: Pointer ke array karakter yang akan menyimpan nama pemain. */
 void inputPlayerName(char* playerName);
 int displayLanguage();
-
+void displayRulesIndonesian();
+void displayRulesEnglish();
+int mainRules();
 #endif // HEADER_H
