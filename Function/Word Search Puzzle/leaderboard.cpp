@@ -20,11 +20,19 @@ void displayLeaderboard(Player leaderboard[], int leaderboardSize) {
     gotoxy(55, 10); printf(" Name");
     gotoxy(75, 10); printf("Score");
     for (int i = 0; i < leaderboardSize; ++i) {
-    	gotoxy(40, 11 + i); printf("%d.", i + 1);
-	    gotoxy(55, 11 + i); printf("%s", leaderboard[i].name);
-	    gotoxy(75, 11 + i); printf(" %d", leaderboard[i].score);
+        gotoxy(40, 11 + i); printf("%d.", i + 1);
+        gotoxy(55, 11 + i); printf("%s", leaderboard[i].name);
+        gotoxy(75, 11 + i); printf(" %d", leaderboard[i].score);
     }
-    printf("\n\n");
+    
+    // Tampilkan informasi terupdate
+    time_t rawtime;
+    struct tm *info;
+    char buffer[80];
+    time(&rawtime);
+    info = localtime(&rawtime);
+    strftime(buffer, 80, "%Y-%m-%d", info);
+    gotoxy(x, 12 + leaderboardSize); printf("Leaderboard updated on: %s", buffer);
 }
 
 /* Fungsi untuk mencari kata dalam array kata dan memperbarui skornya
@@ -86,16 +94,17 @@ void addToLeaderboard(Player leaderboard[], int* leaderboardSize, char* name, in
             leaderboard[minIndex].score = score;
         }
     }
-    // Urutkan leaderboard berdasarkan skor
-    for (int i = 0; i < *leaderboardSize - 1; ++i) {
-        for (int j = i + 1; j < *leaderboardSize; ++j) {
-            if (leaderboard[j].score > leaderboard[i].score) {
-                Player temp = leaderboard[i];
-                leaderboard[i] = leaderboard[j];
-                leaderboard[j] = temp;
-            }
-        }
-    }
+    // Urutkan leaderboard berdasarkan skor (dari yang terbesar ke terkecil)
+		for (int i = 0; i < *leaderboardSize - 1; ++i) {
+		    for (int j = i + 1; j < *leaderboardSize; ++j) {
+		        if (leaderboard[j].score > leaderboard[i].score) {
+		            Player temp = leaderboard[i];
+		            leaderboard[i] = leaderboard[j];
+		            leaderboard[j] = temp;
+		        }
+		    }
+		}
+
 }
 
 /* Fungsi untuk menyimpan leaderboard ke file teks
@@ -107,6 +116,13 @@ void saveLeaderboard(Player leaderboard[], int leaderboardSize) {
         printf("\n\n\n			Gagal membuka file leaderboard.\n");
         return;
     }
+    time_t rawtime;
+    struct tm *info;
+    char buffer[80];
+    time(&rawtime);
+    info = localtime(&rawtime);
+    strftime(buffer, 80, "%Y-%m-%d", info);
+    fprintf(file, "Leaderboard updated on: %s\n", buffer);
     for (int i = 0; i < leaderboardSize; ++i) {
         fprintf(file, "%s %d\n", leaderboard[i].name, leaderboard[i].score);
     }
@@ -122,9 +138,12 @@ void loadLeaderboard(Player leaderboard[], int* leaderboardSize) {
         printf("\n\n\n			File leaderboard tidak ditemukan, leaderboard kosong.\n");
         return;
     }
+    char buffer[100];
+    fgets(buffer, sizeof(buffer), file); // baca tanggal terupdate
     while (*leaderboardSize < MAX_LEADERBOARD_SIZE && fscanf(file, "%s %d", leaderboard[*leaderboardSize].name, &leaderboard[*leaderboardSize].score) == 2) {
         (*leaderboardSize)++;
     }
     fclose(file);
 }
+
 

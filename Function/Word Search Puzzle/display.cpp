@@ -171,6 +171,20 @@ int displayTheme(){
     return levelChoice;
 }
 
+/* Fungsi untuk menampilkan menu pilihan Bahasa dan mengembalikan pilihan pengguna */
+int displayLanguage(){
+	table();
+	int x = 48;
+    BannerTheme();
+    gotoxy(x, 18);printf("1. English\n");
+    gotoxy(x, 19);printf("2. Indonesia\n");
+    gotoxy(x, 17);printf("Your Input: ");
+	
+	int LanguageChoice;
+	scanf("%d", &LanguageChoice);
+    return LanguageChoice;
+}
+
 /* Fungsi untuk menampilkan list secara horizontal menggunakan pointer right
 board: Pointer ke struktur puzzle yang berisi board. */
 void displayList(puzzle* board) {

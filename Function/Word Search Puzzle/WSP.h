@@ -216,5 +216,6 @@ void loadLeaderboard(Player leaderboard[], int* leaderboardSize);
 /* Fungsi untuk meminta nama pemain
 playerName: Pointer ke array karakter yang akan menyimpan nama pemain. */
 void inputPlayerName(char* playerName);
+int displayLanguage();
 
 #endif // HEADER_H
