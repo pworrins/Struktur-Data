@@ -247,7 +247,7 @@ void displayPuzzle(puzzle* board, Player *player){
         for (j = 0; j < size; j++) {
             gotoxy(offsetX + boxWidth * j, offsetY + boxHeight * i);
             if (i < size) {
-                // Garis horizontal
+                // Garis horizontal 
                 printf("%c", 197); // Titik persilangan
                 for (k = 1; k < boxWidth; k++) {
                     gotoxy(offsetX + boxWidth * j + k, offsetY + boxHeight * i);

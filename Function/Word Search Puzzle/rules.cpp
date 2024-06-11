@@ -1,10 +1,30 @@
 #include "WSP.h"
 #include <stdio.h>
+#include <conio.h>
+
+void BannerRules() {
+    int x = 43;
+    gotoxy(x, 3); printf(" _____                      \n");
+    gotoxy(x, 4); printf("|  __ \\                     \n");
+    gotoxy(x, 5); printf("| |  \\/ __ _ _ __ ___   ___ \n");
+    gotoxy(x, 6); printf("| | __ / _` | '_ ` _ \\ / _ \\\n");
+    gotoxy(x, 7); printf("| |_\\ \\ (_| | | | | | |  __/\n");
+    gotoxy(x, 8); printf(" \\____/\\__,_|_| |_| |_|\\___|\n");
+    gotoxy(x, 9);  printf("______      _           \n");
+    gotoxy(x, 10); printf("| ___ \\    | |          \n");
+    gotoxy(x, 11); printf("| |_/ /   _| | ___  ___ \n");
+    gotoxy(x, 12); printf("|    / | | | |/ _ \\/ __|\n");
+    gotoxy(x, 13); printf("| |\\ \\ |_| | |  __/\\__ \\\n");
+    gotoxy(x, 14); printf("\\_| \\_\\__,_|_|\\___||___/\n");
+}
+
+
+
 
 // Fungsi untuk menampilkan aturan permainan dalam bahasa Indonesia
 void displayRulesIndonesian() {
 	system("cls");
-    printf("===== Aturan Permainan Word Search Puzzle =====\n");
+	BannerRules();
     printf("Selamat datang di Word Search Puzzle!\n");
     printf("Word Search Puzzle adalah permainan di mana Anda mencari kata yang tersembunyi di dalam grid huruf.\n");
     printf("Berikut adalah aturan permainan:\n");
@@ -23,7 +43,7 @@ void displayRulesIndonesian() {
 // Fungsi untuk menampilkan aturan permainan dalam bahasa Inggris
 void displayRulesEnglish() {
     system("cls");
-    printf("===== Word Search Puzzle Game Rules =====\n");
+    BannerRules();
     printf("Welcome to Word Search Puzzle!\n");
     printf("Word Search Puzzle is a game where you search for hidden words in a grid of letters.\n");
     printf("Here are the game rules:\n");
@@ -43,12 +63,15 @@ void displayRulesEnglish() {
 // Fungsi utama
 int mainRules() {
 	system("cls");
+	table();
+	BannerRules();
     int languageChoice;
+    int x= 46;
     // Pilihan bahasa
-    printf("Pilih bahasa / Choose language:\n");
-    printf("1. Bahasa Indonesia\n");
-    printf("2. English\n");
-    printf("Your choice: ");
+    gotoxy(x, 18);printf("Pilih bahasa / Choose language:\n");
+    gotoxy(x, 19);printf("1. Bahasa Indonesia\n");
+    gotoxy(x, 20);printf("2. English\n");
+    gotoxy(x, 17);printf("Your choice: ");
     scanf("%d", &languageChoice);
     system("cls");
     // Menampilkan aturan permainan sesuai dengan bahasa yang dipilih

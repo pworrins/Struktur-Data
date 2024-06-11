@@ -219,5 +219,7 @@ void inputPlayerName(char* playerName);
 int displayLanguage();
 void displayRulesIndonesian();
 void displayRulesEnglish();
+void BannerRules();
 int mainRules();
+
 #endif // HEADER_H
