@@ -46,7 +46,7 @@ int main() {
 
                 // Menyimpan waktu terakhir leaderboard diperbarui
                 time(&lastUpdated);
-                printf("\n\n\n			Leaderboard terakhir diperbarui pada: %s\n", ctime(&lastUpdated));
+                printf("\n\n\n			Leaderboard terakhir diperbarui pada: %s \n", ctime(&lastUpdated));
                 break;
             default:
                 printf("Invalid Choice\n");

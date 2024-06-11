@@ -221,5 +221,6 @@ void displayRulesIndonesian();
 void displayRulesEnglish();
 void BannerRules();
 int mainRules();
+void printCentered(char *text, int y) ;
 
 #endif // HEADER_H

@@ -1,18 +1,18 @@
 #include "WSP.h"
 
 // Kamus kata untuk level Easy - Bahasa Indonesia
-char easyKamusID[][MAX_FILENAME_LENGTH] = {"buah", "hewan", "negara"};
+char easyKamusID[][MAX_FILENAME_LENGTH] = {"Buah", "Hewan", "Negara"};
 // Kamus kata untuk level Medium - Bahasa Indonesia
-char mediumKamusID[][MAX_FILENAME_LENGTH] = {"hukum", "pendidikan", "benda"};
+char mediumKamusID[][MAX_FILENAME_LENGTH] = {"Hukum", "Pendidikan", "Benda"};
 // Kamus kata untuk level Hard - Bahasa Indonesia
-char hardKamusID[][MAX_FILENAME_LENGTH] = {"hard_kamus"};
+char hardKamusID[][MAX_FILENAME_LENGTH] = {"Sulit"};
 
 // Kamus kata untuk level Easy - Bahasa Inggris
-char easyKamusEN[][MAX_FILENAME_LENGTH] = {"fruit", "animal", "country"};
+char easyKamusEN[][MAX_FILENAME_LENGTH] = {"Fruit", "Animal", "Country"};
 // Kamus kata untuk level Medium - Bahasa Inggris
-char mediumKamusEN[][MAX_FILENAME_LENGTH] = {"law", "education", "object"};
+char mediumKamusEN[][MAX_FILENAME_LENGTH] = {"Law", "Education", "Object"};
 // Kamus kata untuk level Hard - Bahasa Inggris
-char hardKamusEN[][MAX_FILENAME_LENGTH] = {"hard_dictionary"};
+char hardKamusEN[][MAX_FILENAME_LENGTH] = {"Hard"};
 
 /* = = =  Word Search Functions = = =  */
 
@@ -29,7 +29,7 @@ void playGame(Player *player, Player leaderboard[], int *leaderboardSize) {
             strcpy(kamusPath, "Kamus/EN/"); // Untuk bahasa Inggris
             break;
         case 2:
-            strcpy(kamusPath, "Kamus/ID/"); // Untuk bahasa Indonesia
+            strcpy(kamusPath, "Kamus/ID"); // Untuk bahasa Indonesia
             break;
         default:
             printf("Invalid choice.\n");
@@ -73,15 +73,19 @@ void playGame(Player *player, Player leaderboard[], int *leaderboardSize) {
     }
 
     system("cls");
-    table();
-    int x = 50;
-    BannerTheme();
-    for (int i = 0; i < kamusSize; ++i) {
-        gotoxy(x, 18+i);printf("%d. %s\n", i + 1, selectedKamus[i]);
-    }
-    gotoxy(x,17);printf("Your Choice: ");
-    int choice;
-    scanf("%d", &choice);
+	table();
+	int x = 50;
+	int y = 19; // Mulai dari baris ke-19
+	BannerTheme();
+	for (int i = 0; i < kamusSize; ++i) {
+	    char buffer[50];
+	    sprintf(buffer, "%d. %s", i + 1, selectedKamus[i]);
+	    printCentered(buffer, y); // Mencetak nomor dan kata dengan rata tengah
+	    y++; // Pindah ke baris berikutnya
+	}
+	printCentered("Your Choice: ", 18);
+	int choice;
+	scanf("%d", &choice);
 
     // Validasi pilihan tema
     if (choice < 1 || choice > kamusSize) {
@@ -90,7 +94,7 @@ void playGame(Player *player, Player leaderboard[], int *leaderboardSize) {
 
     // Memuat tema dari file
     char filename[MAX_FILENAME_LENGTH]; // Nama file tema yang dipilih
-    sprintf(filename, "%s%s.txt", kamusPath, selectedKamus[choice - 1]);
+    sprintf(filename, "%s\%s.txt", kamusPath, selectedKamus[choice - 1]);
     FILE *file;
     // Membuka file
     file = fopen(filename, "r");
@@ -153,49 +157,43 @@ void playGame(Player *player, Player leaderboard[], int *leaderboardSize) {
 
         char input_word[50];
         char findedWord[5][50];
-
-        int consoleWidth, consoleHeight;
-        getConsoleSize(&consoleWidth, &consoleHeight);
-
-        // Hitung posisi horizontal untuk teks
-        char inputWord[] = "Input Word : ";
-        int titlePosX = ((consoleWidth - strlen(inputWord)) / 2) - 8;
+        
+	    int consoleWidth, consoleHeight;
+	    getConsoleSize(&consoleWidth, &consoleHeight);
+		
+	    int boxWidth = 4; // Lebar setiap kotak (termasuk garis vertikal)
+	    int boxHeight = 2; // Tinggi setiap kotak (termasuk garis horizontal)
+	    int size = board.size; 
+	
+	    // Hitung offset untuk menempatkan papan di tengah konsol
+	    int offsetX = (consoleWidth - (size * boxWidth)) / 2;
+	    int offsetY = (consoleHeight - (size * boxHeight)) / 2;
+	    int lastpuzzle = offsetY + size * boxHeight;
 
         // Menampilkan teks di tengah konsol
-        gotoxy(titlePosX, consoleHeight - 2);
-        printf("%s", inputWord);
+        gotoxy(offsetX + size * boxHeight / 2 - 4, lastpuzzle+2);
+    	printf("Input Word : ");
+
         scanf("%s", input_word);
         int found = 0;
 
-
         // Keluar dari loop jika pengguna mengetik "q"
-        if (strcmp(input_word, "q") == 0)
+        if (strcmp(input_word, "Q") == 0)
             break;
-
+		
+		int titlePosX;
         // Mencari kata dalam array kata dan memperbarui skor
         int k = 0;
         if ((searchAndUpdateScore(words, scores, wordCount, input_word)) && (findWord(&board, input_word))) {
             for (int i = 0; i < 5; i++) {
                 if (strcmp(input_word, findedWord[i]) == 0) {
-                    // Hitung posisi horizontal untuk teks
-                    char founded[] = "You have found it O_O";
-                    titlePosX = ((consoleWidth - strlen(founded)) / 2) - 8;
-
-                    // Menampilkan teks di tengah konsol
-                    gotoxy(titlePosX, consoleHeight - 1);
-                    printf("%s", founded);
+                    printCentered("You have found it O_O", lastpuzzle + 4);
                     getch();
                     found = 1;
                 }
             }
             if (!found) {
-                // Hitung posisi horizontal untuk teks
-                char awesome[] = "AWESOME ^^";
-                titlePosX = ((consoleWidth - strlen(awesome)) / 2) - 8;
-
-                // Menampilkan teks di tengah konsol
-                gotoxy(titlePosX, consoleHeight - 1);
-                printf("%s", awesome);
+            	printCentered("AWESOME ^^", lastpuzzle + 4);
                 getch();
 
                 player->correctWord++; // Menambahkan jumlah kata yang benar
@@ -203,7 +201,10 @@ void playGame(Player *player, Player leaderboard[], int *leaderboardSize) {
                 strcpy(findedWord[k], input_word);
                 k++;
             }
-        }
+        } else {
+        	printCentered("TRY AGAIN O_O", lastpuzzle + 4);
+        	getch();
+		}
     }
 
     int totalScore = player->score;

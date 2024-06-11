@@ -27,6 +27,18 @@ void getConsoleSize(int *width, int *height) {
     *height = rows;
 }
 
+void printCentered(char *text, int y) {
+    int consoleWidth, consoleHeight;
+    getConsoleSize(&consoleWidth, &consoleHeight);
+
+    // Hitung posisi horizontal untuk teks
+    int posX = (consoleWidth - strlen(text)) / 2;
+
+    // Menampilkan teks di tengah konsol
+    gotoxy(posX, y);
+    printf("%s", text);
+}
+
 void speed(float seconds) {
     clock_t endwait;
     endwait = clock() + seconds * CLOCKS_PER_SEC;
@@ -35,15 +47,22 @@ void speed(float seconds) {
 
 void loading() {
 	system("cls");
-    int x = 42;
     // loading 
-    gotoxy(x,14); printf("               Loading");
-    gotoxy(x,15); printf("     ===========================");
-    gotoxy(x,16); printf("    %c                           %c", 186, 186);
-    gotoxy(x,17); printf("     ===========================");
-    for (int i = 47; i <= 73; i++) {
-        gotoxy(i, 16); printf("\xdb");
-        speed(0.07);
+    printCentered("Loading", 14);
+    printCentered("===========================", 15);
+    printCentered("|                           |", 16);
+    printCentered("===========================", 17);
+    
+    int consoleWidth, consoleHeight;
+    getConsoleSize(&consoleWidth, &consoleHeight);
+
+    int startPos = ((consoleWidth - 30) / 2) + 1; // Menghitung posisi awal loop
+    int endPos = startPos + 26; // Menghitung posisi akhir loop
+
+    for (int i = startPos; i <= endPos; i++) {
+        gotoxy(i, 16);
+        printf("\xdb");
+        Sleep(100); // Waktu jeda (ms)
     }
 }
 
@@ -57,9 +76,9 @@ void table() {
 
     getConsoleSize(&consoleWidth, &consoleHeight);
 
-    // Hitung offset untuk menempatkan tabel di tengah konsol
+    // Hitung offset untuk menempatkan tabel di tengah konsol secara horizontal
     int offsetX = (consoleWidth - tableWidth) / 2;
-    int offsetY = (consoleHeight - 2 * tableHeight) / 2;
+    int offsetY = 3; // Posisi vertikal tetap (misalnya, 3 baris dari atas)
 
     // Membuat kotak pertama (atas)
     // Garis atas
@@ -100,91 +119,87 @@ void table() {
 
 /* Fungsi untuk menampilkan header di konsol */
 void header() {
-	table();
-	int x = 43; 
-	   gotoxy(x, 3);printf(" __          __           _         \n");
-       gotoxy(x, 4);printf(" \\ \\        / /          | |        \n");
-       gotoxy(x, 5);printf("  \\ \\  /\\  / /__  _ __ __| |        \n");
-       gotoxy(x, 6);printf("   \\ \\/  \\/ / _ \\| '__/ _` |        \n");
-       gotoxy(x, 7);printf("    \\  /\\  / (_) | | | (_| |        \n");
-       gotoxy(x, 8);printf("    _\\/__\\/ \\___/|_|  \\__,_|  _     \n");
-       gotoxy(x, 9);printf("   / ____|                   | |    \n");
-       gotoxy(x, 10);printf("  | (___   ___  __ _ _ __ ___| |__  \n");
-       gotoxy(x, 11);printf("   \\___ \\ / _ \\/ _` | '__/ __| '_ \\ \n");
-       gotoxy(x, 12);printf("   ____) |  __/ (_| | | | (__| | | |\n");
-       gotoxy(x, 13);printf("  |_____/ \\___|\\__,_|_|  \\___|_| |_|   \n");
+    table();
+    printCentered(" __          __           _         \n", 4);
+    printCentered(" \\ \\        / /          | |        \n", 5);
+    printCentered("  \\ \\  /\\  / /__  _ __ __| |        \n", 6);
+    printCentered("   \\ \\/  \\/ / _ \\| '__/ _` |        \n", 7);
+    printCentered("    \\  /\\  / (_) | | | (_| |        \n", 8);
+    printCentered("    _\\/__\\/ \\___/|_|  \\__,_|  _     \n", 9);
+    printCentered("   / ____|                   | |    \n", 10);
+    printCentered("  | (___   ___  __ _ _ __ ___| |__  \n", 11);
+    printCentered("   \\___ \\ / _ \\/ _` | '__/ __| '_ \\ \n", 12);
+    printCentered("   ____) |  __/ (_| | | | (__| | | |\n", 13);
+    printCentered("  |_____/ \\___|\\__,_|_|  \\___|_| |_|\n", 14);
 }
 
 
-/* Fungsi untuk meminta nama pemain
-playerName: Pointer ke array karakter yang akan menyimpan nama pemain. */
+/* Fungsi untuk meminta nama pemain */
 void inputPlayerName(char* playerName) {
     int x = 48;
-    gotoxy(40, 17); printf("   WELCOME TO WORD SEARCH PUZZLE GAME ");
+    gotoxy(40, 17); printf("WELCOME TO WORD SEARCH PUZZLE GAME ");
     gotoxy(x, 19); printf("Input your name: ");
     scanf("%s", playerName);
 }
 
 /* Fungsi untuk menampilkan banner theme di konsol */
 void BannerTheme(){
-	int x = 48;
-	gotoxy(x, 6);printf(" _____ ________  ___ ___  \n");
-    gotoxy(x, 7);printf("|_   _|  ___|  \\/  |/ _ \\ \n");
-    gotoxy(x, 8);printf("  | | | |__ | .  . / /_\\ \\\n");
-    gotoxy(x, 9);printf("  | | |  __|| |\\/| |  _  |\n");
-    gotoxy(x, 10);printf("  | | | |___| |  | | | | |\n");
-    gotoxy(x, 11);printf("  \\_/ \\____/\\_|  |_|_| |_/\n");
+    printCentered(" _____ _                         \n", 7);
+    printCentered("|_   _| |                        \n", 8);
+    printCentered("  | | | |__   ___ _ __ ___   ___ \n", 9);
+    printCentered("  | | | '_ \\ / _ \\ '_ ` _ \\ / _ \\\n", 10);
+    printCentered("  | | | | | |  __/ | | | | |  __/\n", 11);
+    printCentered("  \\_/ |_| |_|\\___|_| |_| |_|\\___|\n", 12);
+    printCentered("                                 \n", 13);
 }
+
 
 /* Fungsi untuk menampilkan main menu dan mengembalikan pilihan pengguna */
 int displayMainMenu() {
 	table();
-	int x = 35;
-	int y = 48;
+
     int choice;
-    gotoxy(x, 6);printf("  __  __       _         __  __                  \n");
-    gotoxy(x, 7);printf(" |  \\/  |     (_)       |  \\/  |                 \n");
-    gotoxy(x, 8);printf(" | \\  / | __ _ _ _ __   | \\  / | ___ _ __  _   _ \n");
-    gotoxy(x, 9);printf(" | |\\/| |/ _` | | '_ \\  | |\\/| |/ _ \\ '_ \\| | | |\n");
-    gotoxy(x,10);printf(" | |  | | (_| | | | | | | |  | |  __/ | | | |_| |\n");
-    gotoxy(x,11);printf(" |_|  |_|\\__,_|_|_| |_| |_|  |_|\\___|_| |_|\\__,_|\n");
-    gotoxy(y,18);printf("1. Start\n");
-    gotoxy(y,19);printf("2. Rules\n");
-    gotoxy(y,20);printf("3. Leaderboard\n");
-    gotoxy(y,21);printf("4. Quit\n");
-    gotoxy(y,17);printf("Your Input: ");
+    printCentered("  __  __       _         __  __                  \n", 6);
+    printCentered(" |  \\/  |     (_)       |  \\/  |                 \n", 7);
+    printCentered(" | \\  / | __ _ _ _ __   | \\  / | ___ _ __  _   _ \n", 8);
+    printCentered(" | |\\/| |/ _` | | '_ \\  | |\\/| |/ _ \\ '_ \\| | | |\n", 9);
+    printCentered(" | |  | | (_| | | | | | | |  | |  __/ | | | |_| |\n", 10);
+    printCentered(" |_|  |_|\\__,_|_|_| |_| |_|  |_|\\___|_| |_|\\__,_|\n", 11);
+    printCentered("1. Start\n", 18);
+    printCentered("2. Rules\n", 19);
+    printCentered("3. Leaderboard\n", 20);
+    printCentered("4. Quit", 21);
+    printCentered("Your Input: ", 17);
     scanf("%d", &choice);
     return choice;
 }
 
 /* Fungsi untuk menampilkan menu pilihan tema dan mengembalikan pilihan pengguna */
 int displayTheme(){
-	table();
-	int x = 48;
+    table();
     BannerTheme();
-    gotoxy(x, 18);printf("1. Easy\n");
-    gotoxy(x, 19);printf("2. Medium\n");
-    gotoxy(x, 20);printf("3. Hard\n");
-    gotoxy(x, 17);printf("Your Input: ");
-	
-	int levelChoice;
-	scanf("%d", &levelChoice);
+    printCentered("1. Easy\n", 19);
+    printCentered("2. Medium\n", 20);
+    printCentered("3. Hard\n", 21);
+    printCentered("Your Input: ", 18);
+
+    int levelChoice;
+    scanf("%d", &levelChoice);
     return levelChoice;
 }
 
 /* Fungsi untuk menampilkan menu pilihan Bahasa dan mengembalikan pilihan pengguna */
 int displayLanguage(){
-	table();
-	int x = 48;
+    table();
     BannerTheme();
-    gotoxy(x, 18);printf("1. English\n");
-    gotoxy(x, 19);printf("2. Indonesia\n");
-    gotoxy(x, 17);printf("Your Input: ");
-	
-	int LanguageChoice;
-	scanf("%d", &LanguageChoice);
+    printCentered("1. English\n", 19);
+    printCentered("2. Indonesia\n", 20);
+    printCentered("Your Input: ", 18);
+
+    int LanguageChoice;
+    scanf("%d", &LanguageChoice);
     return LanguageChoice;
-}
+} 
 
 /* Fungsi untuk menampilkan list secara horizontal menggunakan pointer right
 board: Pointer ke struktur puzzle yang berisi board. */
@@ -230,7 +245,7 @@ void displayPuzzle(puzzle* board, Player *player){
 	int titlePosX = (consoleWidth - strlen(puzzleTitle)) / 2;
 	
 	// Menampilkan teks di tengah konsol
-	gotoxy(titlePosX, 1);
+	gotoxy(titlePosX, offsetY-2);
 	printf("%s", puzzleTitle);
 	
 	gotoxy(offsetX + size * boxWidth + 3, offsetY+1);
@@ -239,6 +254,9 @@ void displayPuzzle(puzzle* board, Player *player){
     printf("You found %d words", player->correctWord);
     gotoxy(offsetX + size * boxWidth + 3, offsetY+4);
     printf("Total Score: %d", player->score);
+    
+    gotoxy(offsetX + size * boxWidth + 3, offsetY+7);
+    printf("Press 'Q' to quit the game");
 
     int i, j, k;
 
