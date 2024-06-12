@@ -30,13 +30,14 @@ int main() {
                 playGame(&player, leaderboard, &leaderboardSize); // Memulai permainan
             }
             case 2:
-                // Menampilkan Rules
-                mainRules();
+            	// Menampilkan leaderboard
+                displayLeaderboard(leaderboard, leaderboardSize);
                 getch();
+                
                 break;
             case 3:
-                // Menampilkan leaderboard
-                displayLeaderboard(leaderboard, leaderboardSize);
+            	// Menampilkan Rules
+                mainRules();
                 getch();
                 break;
             case 4:

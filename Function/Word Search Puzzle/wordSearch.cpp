@@ -29,7 +29,7 @@ void playGame(Player *player, Player leaderboard[], int *leaderboardSize) {
             strcpy(kamusPath, "Kamus/EN/"); // Untuk bahasa Inggris
             break;
         case 2:
-            strcpy(kamusPath, "Kamus/ID"); // Untuk bahasa Indonesia
+            strcpy(kamusPath, "Kamus/ID/"); // Untuk bahasa Indonesia
             break;
         default:
             printf("Invalid choice.\n");
@@ -94,7 +94,7 @@ void playGame(Player *player, Player leaderboard[], int *leaderboardSize) {
 
     // Memuat tema dari file
     char filename[MAX_FILENAME_LENGTH]; // Nama file tema yang dipilih
-    sprintf(filename, "%s\%s.txt", kamusPath, selectedKamus[choice - 1]);
+    sprintf(filename, "%s%s.txt", kamusPath, selectedKamus[choice - 1]);
     FILE *file;
     // Membuka file
     file = fopen(filename, "r");

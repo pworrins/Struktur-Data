@@ -166,8 +166,8 @@ int displayMainMenu() {
     printCentered(" | |  | | (_| | | | | | | |  | |  __/ | | | |_| |\n", 10);
     printCentered(" |_|  |_|\\__,_|_|_| |_| |_|  |_|\\___|_| |_|\\__,_|\n", 11);
     printCentered("1. Start\n", 18);
-    printCentered("2. Rules\n", 19);
-    printCentered("3. Leaderboard\n", 20);
+    printCentered("2. Leaderboard\n", 19);
+    printCentered("3. Rules\n", 20);
     printCentered("4. Quit", 21);
     printCentered("Your Input: ", 17);
     scanf("%d", &choice);
