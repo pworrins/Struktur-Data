@@ -71,7 +71,8 @@ void playGame(Player *player, Player leaderboard[], int *leaderboardSize) {
             printf("Invalid choice.\n");
             return; // Keluar dari fungsi playGame
     }
-
+	
+	loading();
     system("cls");
 	table();
 	int x = 50;
@@ -94,7 +95,7 @@ void playGame(Player *player, Player leaderboard[], int *leaderboardSize) {
 
     // Memuat tema dari file
     char filename[MAX_FILENAME_LENGTH]; // Nama file tema yang dipilih
-    sprintf(filename, "%s%s.txt", kamusPath, selectedKamus[choice - 1]);
+    sprintf(filename, "%s/%s.txt", kamusPath, selectedKamus[choice - 1]);
     FILE *file;
     // Membuka file
     file = fopen(filename, "r");

@@ -33,7 +33,8 @@ void Rules () {
 
 // Fungsi untuk menampilkan aturan permainan dalam bahasa Indonesia
 void displayRulesIndonesian() {
-    system("cls");
+    loading();
+	system("cls");
     Rules();
     printCentered("Selamat datang di Word Search Puzzle!\n", 11);
     printCentered("Word Search Puzzle adalah permainan di mana Anda mencari kata yang tersembunyi di dalam grid huruf.\n", 12);
@@ -52,6 +53,7 @@ void displayRulesIndonesian() {
 
 // Fungsi untuk menampilkan aturan permainan dalam bahasa Inggris
 void displayRulesEnglish() {
+	loading();
     system("cls");
     Rules();
     printCentered("Welcome to Word Search Puzzle!\n", 11);
@@ -71,6 +73,7 @@ void displayRulesEnglish() {
 
 // Fungsi utama
 int mainRules() {
+	loading();
     system("cls");
     table();
     BannerRules();

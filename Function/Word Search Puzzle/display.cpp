@@ -62,7 +62,7 @@ void loading() {
     for (int i = startPos; i <= endPos; i++) {
         gotoxy(i, 16);
         printf("\xdb");
-        Sleep(100); // Waktu jeda (ms)
+        Sleep(30); // Waktu jeda (ms)
     }
 }
 
@@ -156,6 +156,7 @@ void BannerTheme(){
 
 /* Fungsi untuk menampilkan main menu dan mengembalikan pilihan pengguna */
 int displayMainMenu() {
+	loading();
 	table();
 
     int choice;
@@ -176,6 +177,7 @@ int displayMainMenu() {
 
 /* Fungsi untuk menampilkan menu pilihan tema dan mengembalikan pilihan pengguna */
 int displayTheme(){
+	loading();
     table();
     BannerTheme();
     printCentered("1. Easy\n", 19);
@@ -190,6 +192,7 @@ int displayTheme(){
 
 /* Fungsi untuk menampilkan menu pilihan Bahasa dan mengembalikan pilihan pengguna */
 int displayLanguage(){
+	loading();
     table();
     BannerTheme();
     printCentered("1. English\n", 19);

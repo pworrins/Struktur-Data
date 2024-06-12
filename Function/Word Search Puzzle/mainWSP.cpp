@@ -15,7 +15,6 @@ int main() {
     // Meminta nama pemain
     Player player;
     inputPlayerName(player.name);
-    loading();
     player.score = 0;
     
     system("cls");
@@ -23,20 +22,18 @@ int main() {
     int choice;
     do {
         choice = displayMainMenu();
-        loading();
         switch (choice) {
             case 1: {
                 system("cls"); // Membersihkan layar sebelum memulai permainan
                 playGame(&player, leaderboard, &leaderboardSize); // Memulai permainan
             }
             case 2:
-            	// Menampilkan leaderboard
+                // Menampilkan Rules
                 displayLeaderboard(leaderboard, leaderboardSize);
                 getch();
-                
                 break;
             case 3:
-            	// Menampilkan Rules
+                // Menampilkan leaderboard
                 mainRules();
                 getch();
                 break;
@@ -47,7 +44,6 @@ int main() {
 
                 // Menyimpan waktu terakhir leaderboard diperbarui
                 time(&lastUpdated);
-                printf("\n\n\n			Leaderboard terakhir diperbarui pada: %s \n", ctime(&lastUpdated));
                 break;
             default:
                 printf("Invalid Choice\n");

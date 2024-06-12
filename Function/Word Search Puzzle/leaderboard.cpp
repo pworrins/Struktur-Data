@@ -6,6 +6,7 @@
 leaderboard: Array dari struktur Player yang berisi leaderboard.
 leaderboardSize: Jumlah pemain dalam leaderboard. */
 void displayLeaderboard(Player leaderboard[], int leaderboardSize) {
+    loading();
     system("cls"); // Membersihkan layar sebelum menampilkan leaderboard
     int x = 30;
     gotoxy(x, 2); printf(" _                    _           _                         _ \n");
@@ -32,7 +33,7 @@ void displayLeaderboard(Player leaderboard[], int leaderboardSize) {
     time(&rawtime);
     info = localtime(&rawtime);
     strftime(buffer, 80, "%Y-%m-%d", info);
-    gotoxy(x, 12 + leaderboardSize); printf("Leaderboard updated on: %s", buffer);
+    gotoxy(x, 1 + leaderboardSize  + 13); printf("Leaderboard updated on: %s", buffer);
 }
 
 /* Fungsi untuk mencari kata dalam array kata dan memperbarui skornya
