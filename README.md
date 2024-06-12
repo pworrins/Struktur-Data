@@ -36,6 +36,7 @@ typedef struct puzzle {
 
 typedef struct Player {
     char name[50];
+    int correctWord;
     int score;
 } Player;
 ```
